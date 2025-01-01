@@ -2,26 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  .login-form-custom {
-    @apply bg-white p-8 rounded-lg shadow-md w-full max-w-md;
-  }
-  
-  .login-button-custom {
-    @apply w-full bg-[#007bff] hover:bg-[#0056b3] text-white py-2 px-4 rounded;
-  }
-}
-
-/* Custom styles that won't conflict with Tailwind */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
-.custom-input {
-  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none;
-}
-
 body {
   font-family: Arial, sans-serif;
   background-color: #bcced5;

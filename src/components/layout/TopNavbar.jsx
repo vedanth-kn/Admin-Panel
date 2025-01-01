@@ -23,7 +23,7 @@ export const TopNavbar = () => {
 
   return (
     <Navbar 
-      className="mt-5 w-[98%] flex  bg-white border border-gray-300 rounded-[16px]" 
+      className="mt-5 w-[98%] flex bg-white border border-gray-300 rounded-[16px]" 
       maxWidth="full"
       height="6rem"
     >
