@@ -23,7 +23,7 @@ export const TopNavbar = () => {
 
   return (
     <Navbar 
-      className="mt-5 w-[98%] flex bg-white border border-gray-300 rounded-[16px]" 
+      className="sticky top-3 ml-6 mt-3 mb-3 w-[97%] flex bg-white border-4 border-[#cadce3] border-gray-300 rounded-[16px]" 
       maxWidth="full"
       height="6rem"
     >
@@ -47,14 +47,14 @@ export const TopNavbar = () => {
 
       <NavbarContent justify="end">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-default-500">
+          <div className="flex items-center gap-2 text-default-700">
             <Calendar size={16} />
             <span>{currentDate}</span>
           </div>
 
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
-              <Button isIconOnly variant="light" className="text-default-500">
+              <Button isIconOnly variant="light" className="text-default-700">
                 <Bell size={20} />
               </Button>
             </DropdownTrigger>
@@ -62,7 +62,7 @@ export const TopNavbar = () => {
               <DropdownItem>No new notifications</DropdownItem>
             </DropdownMenu>
           </Dropdown>
-          <Link href="/" className="w-[130px] h-12 p-5 bg-black text-gray-400 hover:text-gray-600 rounded-[30px]">
+          <Link href="/" className="flex justify-center w-[130px] h-12 p-5 bg-black text-gray-100 hover:text-gray-600 rounded-[30px]">
             <p className='text-white'>Logout</p>
             <LogOut className='m-2 h-6 w-6'/>
           </Link>

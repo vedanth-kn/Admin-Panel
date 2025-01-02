@@ -27,7 +27,7 @@ export const Sidebar = () => {
   }, []);
 
   return (
-    <aside className="m-5 w-64 flex flex-col bg-white border border-gray-300 rounded-[16px] border-4 border-[#cadce3]">
+    <aside className="sticky top-3 left-3 h-[calc(100vh-1.5rem)] w-64 flex flex-col bg-white border border-gray-300 rounded-[16px] border-4 border-[#cadce3]">
       <div className="p-6">
         <div className="pb-4 font-bold text-[46px] text-gray-800 text-center border-b border-[#bcced5]">ZOGG</div>
       </div>
@@ -37,7 +37,7 @@ export const Sidebar = () => {
           <Link
             key={item.name}
             href={item.href}
-            className={`flex items-center px-4 py-4 text-sm font-medium rounded-[30px] 
+            className={`flex items-center px-4 py-3 text-sm font-medium rounded-[30px] 
               ${pathname === item.href 
                 ? 'text-white bg-gray-800' // Active styles
                 : 'text-gray-700 hover:bg-gray-100'}`}
@@ -55,7 +55,7 @@ export const Sidebar = () => {
           </div>
           <div className="text-center">
             <p className="text-[22px] font-bold">{name}</p>
-            <p className="text-xs text-gray-500 truncate">{email}</p>
+            <p className="text-xs text-gray-700 truncate">{email}</p>
           </div>
         </div>
       </div>
