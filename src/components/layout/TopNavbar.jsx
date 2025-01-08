@@ -55,14 +55,14 @@ export const TopNavbar = () => {
 
       <NavbarContent justify="end">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-default-500">
+          <div className="flex items-center gap-2 text-default-700">
             <Calendar size={16} />
             <span>{currentDate}</span>
           </div>
 
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
-              <Button isIconOnly variant="light" className="text-default-500">
+              <Button isIconOnly variant="light" className="text-default-700">
                 <Bell size={20} />
               </Button>
             </DropdownTrigger>
@@ -70,7 +70,10 @@ export const TopNavbar = () => {
               <DropdownItem>No new notifications</DropdownItem>
             </DropdownMenu>
           </Dropdown>
-          
+          <Link href="/" className="flex justify-center w-[130px] h-12 p-5 bg-black text-gray-100 hover:text-gray-600 rounded-[30px]">
+            <p className='text-white'>Logout</p>
+            <LogOut className='m-2 h-6 w-6'/>
+          </Link>    
           <Button 
             onClick={handleLogout}
             className="w-[130px] h-12 p-5 bg-black text-white hover:bg-gray-800 rounded-[30px] flex items-center justify-between"

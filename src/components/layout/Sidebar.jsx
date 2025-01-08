@@ -55,7 +55,7 @@ export const Sidebar = () => {
           </div>
           <div className="text-center">
             <p className="text-[22px] font-bold">{name}</p>
-            <p className="text-xs text-gray-500 truncate">{email}</p>
+            <p className="text-xs text-gray-700 truncate">{email}</p>
           </div>
         </div>
       </div>
