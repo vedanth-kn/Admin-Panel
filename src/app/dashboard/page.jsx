@@ -16,7 +16,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
-    <div className='p-8 ml-[-2%] w-[102%] h-32 bg-white rounded-[16px]'>
+    <div className='p-6 w-[100.8%] h-[1000px] mt-[-22px] bg-white border-4 border-[#cadce3] border-gray-300 rounded-[16px]'>
       <h2>Hello!! {username || 'Guest'}</h2>
       <p>This is the dashboard page after login.</p>
     </div>
