@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    const response = await fetch('http://localhost:5000/api/auth/login', {
+    const response = await fetch('http://localhost:8080/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const res = NextResponse.json({
       user: {
         email: data.email,
-        username: data.username
+        name: data.name
       }
     })
 

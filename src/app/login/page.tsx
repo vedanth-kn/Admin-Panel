@@ -1,7 +1,6 @@
 // src/app/login/page.tsx
 'use client'
 import { LoginForm } from '@/components/auth/LoginForm'
-import { useAuth } from '@/components/auth/AuthProvider'
 
 export default function LoginPage() {
   

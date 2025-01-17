@@ -1,13 +1,13 @@
-// src/app/teams/page.jsx
+// src/app/coupons/page.jsx
 'use client';
 import Layout from '@/components/layout/Layout';
 
-export default function Teams() {
+export default function Coupons() {
     return (
         <Layout>
       <div className='container'>
-        <h1>TEAMS</h1>
-        {/* Team content */}
+        <h1>COUPONS</h1>
+        {/* Coupons content */}
       </div>
       </Layout>
     );

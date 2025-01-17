@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 type User = {
   email: string
-  username: string
+  name: string
 } | null
 
 type AuthContextType = {
@@ -23,11 +23,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Initialize user from localStorage if available
-    const username = localStorage.getItem('username')
+    const name = localStorage.getItem('name')
     const email = localStorage.getItem('email')
     
-    if (username && email) {
-      setUser({ username, email })
+    if (name && email) {
+      setUser({ name, email })
     }
     setIsLoading(false)
   }, [])
@@ -51,11 +51,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Update state and localStorage atomically
       const userData = {
         email: data.user.email,
-        username: data.user.username,
+        name: data.user.name,
       }
       
       setUser(userData)
-      localStorage.setItem('username', userData.username)
+      localStorage.setItem('name', userData.name)
       localStorage.setItem('email', userData.email)
 
       router.push('/dashboard')
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       setUser(null)
-      localStorage.removeItem('username')
+      localStorage.removeItem('name')
       localStorage.removeItem('email')
       
       router.push('/login')

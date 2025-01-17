@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ebc8b524-e593-416e-88d3-11bb12220204",
+    "brand": "Puma",
+    "title": "Shoes",
+    "description": "sdfdfgh gdgjdffs gfdfghhg hdfdssassaddf",
+    "discount": 3,
+    "coins": 3,
+    "price": "",
+    "logo1": "uploads/021c4750-948e-4d23-81af-8f29c0edcb1e-wp9641825.jpg",
+    "logo2": null,
+    "productImage": null,
+    "banarImage": null,
+    "websiteLink": "http://localhost:3000/brands",
+    "validUpTo": "",
+    "terms": [],
+    "howToAvail": [],
+    "createdAt": "2025-01-16T18:50:55.831Z",
+    "updatedAt": "2025-01-16T18:50:55.831Z",
+    "_v": 0
+  }
+]
