@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation'; // For getting the current route
 import { Link } from "@nextui-org/react";
-import { LayoutDashboard, Users, UserCircle, Shield, Lock, Settings } from "lucide-react";
+import { LayoutDashboard, Users, UserCircle, Shield, Lock, Settings, Ticket, Tag, Briefcase  } from "lucide-react";
 
 export const Sidebar = () => {
   const navigation = [
@@ -11,6 +11,9 @@ export const Sidebar = () => {
     { name: 'Users', href: '/users', icon: Users },
     { name: 'Teams', href: '/teams', icon: UserCircle },
     { name: 'Roles', href: '/roles', icon: Shield },
+    { name: 'Brands', href: '/brands', icon: Briefcase },
+    { name: 'Coupons', href: '/coupons', icon: Tag },
+    { name: 'Vouchers', href: '/vouchers', icon: Ticket },
     { name: 'Permissions', href: '/permissions', icon: Lock },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
@@ -27,12 +30,11 @@ export const Sidebar = () => {
   }, []);
 
   return (
-    <aside className="sticky top-3 left-3 h-[calc(100vh-1.5rem)] w-64 flex flex-col bg-white border border-gray-300 rounded-[16px] border-4 border-[#cadce3]">
+    <aside className="sticky top-3 left-3 h-[calc(100vh-1.5rem)] w-64 flex flex-col bg-white border border-gray-300 rounded-[16px] border-4 border-[#C5D2DD]">
       <div className="p-6">
         <div className="pb-4 font-bold text-[46px] text-gray-800 text-center border-b border-[#bcced5]">ZOGG</div>
       </div>
-      
-      <nav className="flex-1 space-y-1 px-6">
+      <nav className="flex-1  overflow-y-auto space-y-1 px-6">
         {navigation.map((item) => (
           <Link
             key={item.name}
@@ -47,18 +49,6 @@ export const Sidebar = () => {
           </Link>
         ))}
       </nav>
-
-      <div className="p-10 mt-auto flex justify-center items-center">
-        <div className="flex flex-col items-center space-y-2">
-          <div className="m-2 h-14 w-14 rounded-full bg-[#bcced5] flex items-center justify-center">
-            {name.charAt(0)}
-          </div>
-          <div className="text-center">
-            <p className="text-[22px] font-bold">{name}</p>
-            <p className="text-xs text-gray-700 truncate">{email}</p>
-          </div>
-        </div>
-      </div>
     </aside>
   );
 };
