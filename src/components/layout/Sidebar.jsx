@@ -12,8 +12,8 @@ export const Sidebar = () => {
     { name: 'Teams', href: '/teams', icon: UserCircle },
     { name: 'Roles', href: '/roles', icon: Shield },
     { name: 'Brands', href: '/brands', icon: Briefcase },
-    { name: 'Coupons', href: '/coupons', icon: Tag },
     { name: 'Vouchers', href: '/vouchers', icon: Ticket },
+    { name: 'Coupons', href: '/coupons', icon: Tag },
     { name: 'Permissions', href: '/permissions', icon: Lock },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];

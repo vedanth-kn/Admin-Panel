@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Label } from "@radix-ui/react-label";
 import { Button } from "@nextui-org/react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { X } from 'lucide-react';
+import { apiService } from '@/services/api';
 
 const categories = [
   "SHOPPING",
@@ -14,7 +16,14 @@ const categories = [
 ];
 
 
-export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData, handleSubmit }) {
+export default function BrandDialog ({ 
+    isOpen, 
+    setIsOpen, 
+    formData, 
+    setFormData,
+    isLoading,
+    onSuccessfulSubmit  
+}) {
     const [filteredOptions, setFilteredOptions] = useState(categories);
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -37,13 +46,56 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
         setFormData({ ...formData, business_category: option });
         setShowDropdown(false);
     };
-    const handleFileChange = (field) => (e) => {
-        setFormData({
-            ...formData,
-            [field]: e.target.files[0]
-        });
-    };
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState(null);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        setError(null);
+      
+        try {
+          // Prepare form data as a JavaScript object
+          const formDataToSubmit = {
+            name: formData.name,
+            description: formData.description,
+            website_url: formData.website_url,
+            business_category: formData.business_category,
+            media_details: [
+              ...(formData.logoUrl ? [{ display_type: 'logo', file_name: formData.logoUrl.split('/').pop(), media_url: formData.logoUrl }] : []),
+              ...(formData.bannerUrl ? [{ display_type: 'banner', file_name: formData.bannerUrl.split('/').pop(), media_url: formData.bannerUrl }] : []),
+              ...(formData.brandImageUrl ? [{ display_type: 'brand_image', file_name: formData.brandImageUrl.split('/').pop(), media_url: formData.brandImageUrl }] : []),
+            ],
+          };
+
+          console.log(formDataToSubmit)
+      
+          // Convert to JSON and send in the request body
+          const response = await apiService.createBrand(JSON.stringify(formDataToSubmit), {});
+      
+          // Reset form and close dialog
+          setFormData({
+            name: '',
+            description: '',
+            website_url: '',
+            business_category: '',
+            logoUrl: '',
+            bannerUrl: '',
+            brandImageUrl: '',
+          });
+      
+          // Optional callback for parent component to refresh brands
+          onSuccessfulSubmit?.();
+      
+          setIsOpen(false);
+        } catch (err) {
+          setError(err.message);
+          console.error('Brand creation error:', err);
+        } finally {
+          setSubmitting(false);
+        }
+      };
+    
     return (
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Portal>
@@ -56,7 +108,7 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
 
                     {/* Scrollable Content */}
                     <div className="flex-1 overflow-y-auto p-6">
-                        <form id="voucherForm" onSubmit={handleSubmit} className="space-y-4">
+                        <form id="brandForm" onSubmit={handleSubmit} className="space-y-4">
                             {/* First Row */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -81,10 +133,8 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     />
                                 </div>
-                            </div>
 
-                            {/* Second Row */}
-                            <div className="grid grid-cols-2 gap-4">
+                                {/* Second Row */}
                                 <div>
                                     <Label htmlFor="website_url" className="block mb-2">Website URL</Label>
                                     <input
@@ -127,24 +177,36 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
                                         </ul>
                                     )}
                                 </div>
+
+                                {/* Third Row */}
                                 <div>
-                                    <Label htmlFor="image" className="block mb-2">Image</Label>
-                                    <div className="flex gap-2 items-center">
-                                        <Button
-                                            type="button"
-                                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg"
-                                            onClick={() => document.getElementById('image').click()}
-                                        >
-                                            Choose
-                                        </Button>
-                                        <input
-                                            id="image"
-                                            type="file"
-                                            className="hidden"
-                                            onChange={handleFileChange('image')}
-                                        />
-                                        <span className="truncate">{formData.image?.name || ''}</span>
+                                    <label className="block text-sm font-medium mb-1">Logo URL</label>
+                                    <input
+                                        type="url"
+                                        value={formData.logoUrl}
+                                        onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                    />
                                     </div>
+
+                                    <div>
+                                    <label className="block text-sm font-medium mb-1">Banner URL</label>
+                                    <input
+                                        type="url"
+                                        value={formData.bannerUrl}
+                                        onChange={(e) => setFormData({...formData, bannerUrl: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                    />
+                                    </div>
+                                    {/* Fourth Row */}
+                                    <div>
+                                    <label className="block text-sm font-medium mb-1">Brand Image URL</label>
+                                    <input
+                                        type="url"
+                                        value={formData.brandImageUrl}
+                                        onChange={(e) => setFormData({...formData, brandImageUrl: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                    />
                                 </div>
                             </div>
                         </form>
@@ -162,13 +224,22 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
                             </Button>
                             <Button
                                 type="submit"
-                                form="voucherForm"
+                                form="brandForm"
                                 className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                disabled={submitting}
                             >
-                                Save Brand
+                                {submitting ? 'Submitting...' : 'Add Brand'}
                             </Button>
                         </div>
                     </div>
+                    <Dialog.Close asChild>
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              aria-label="Close"
+            >
+              <X/>
+            </button>
+          </Dialog.Close>
                 </Dialog.Content>
             </Dialog.Portal>
         </Dialog.Root>

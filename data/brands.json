@@ -9,5 +9,16 @@
     "createdAt": "2025-01-16T18:47:11.769Z",
     "updatedAt": "2025-01-16T18:47:11.769Z",
     "_v": 0
+  },
+  {
+    "id": "875e472a-b84a-4de5-8e18-a4c8477f1bb2",
+    "name": "Vednath  K N",
+    "description": "sdfdfgh gdgjdffs gfdfghhg hdfdssassaddf",
+    "website_url": "http://localhost:3000/brands",
+    "business_category": "SHOPPING",
+    "image": null,
+    "createdAt": "2025-01-17T08:00:43.324Z",
+    "updatedAt": "2025-01-17T08:00:43.324Z",
+    "_v": 0
   }
 ]
