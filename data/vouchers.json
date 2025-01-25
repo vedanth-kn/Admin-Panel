@@ -18,5 +18,25 @@
     "createdAt": "2025-01-16T18:50:55.831Z",
     "updatedAt": "2025-01-16T18:50:55.831Z",
     "_v": 0
+  },
+  {
+    "id": "c92ebcb7-aced-47c8-85f4-d3f8aefc6820",
+    "brand": "",
+    "title": "Laptop",
+    "description": "",
+    "discount": 0,
+    "coins": 0,
+    "price": "",
+    "logo1": null,
+    "logo2": null,
+    "productImage": null,
+    "banarImage": null,
+    "websiteLink": "",
+    "validUpTo": "",
+    "terms": [],
+    "howToAvail": [],
+    "createdAt": "2025-01-22T08:59:33.775Z",
+    "updatedAt": "2025-01-22T08:59:33.775Z",
+    "_v": 0
   }
 ]

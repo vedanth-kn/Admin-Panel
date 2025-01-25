@@ -66,7 +66,7 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
                   base: "w-full",
                   mainWrapper: "h-full",
                   input: "p-3 text-medium",
-                  inputWrapper: "h-full font-normal text-default-500 bg-[#ddebf0] dark:bg-default-500/20 rounded-[30px]",
+                  inputWrapper: "h-full font-normal text-default-500 bg-[#D6DDE3] dark:bg-default-500/20 rounded-[30px]",
                 }}
                 placeholder="Search..."
                 size="lg"
