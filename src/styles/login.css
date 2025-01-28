@@ -1,55 +1,93 @@
-  .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    background-color: #bcced5;
-  }
-  
-  .login-form {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    box-sizing: border-box;
-  }
-  
-  .login-form h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 28px;
-    color: #333;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #666;
-  }
-  
-  
-  .login-button {
-    background-color: #000000;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    font-size: 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 20;
-  }
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: #bcced5;
+}
 
+.login-form {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
 
-  .alert-container {
-    margin-top: 2rem;
-    /* text-align: center; */
-  }
-  
+.login-form h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.login-button {
+  background-color: #000000;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.send-otp-button {
+  background-color: #000000;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.resend-container {
+  margin-top: 8px;
+  text-align: right;
+}
+
+.resend-link {
+  color: #0066cc;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.resend-timer {
+  color: #666;
+  font-size: 14px;
+}
+
+.alert-container {
+  margin-top: 2rem;
+}
+
+.login-button:hover,
+.send-otp-button:hover {
+  opacity: 0.9;
+}
+
+.login-button:disabled,
+.send-otp-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

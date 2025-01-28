@@ -92,7 +92,7 @@ export default function Vouchers() {
                                         key={vouchers.id} 
                                         className="border border-gray-900 rounded-lg p-4 shadow-sm flex gap-4 cursor-pointer hover:shadow-md transition-shadow"
                                         onClick={() => {
-                                            setSelectedBrand(brand);
+                                            setSelectedVoucher(vouchers);
                                             setIsDetailsOpen(true);
                                         }}
                                     >

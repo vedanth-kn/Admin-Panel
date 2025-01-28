@@ -75,24 +75,7 @@ const BrandDetailsDialog = ({
           <div className="p-6 border-b">
             <Dialog.Title className="flex justify-between items-center">
               <span className="text-xl font-bold">{isEditMode ? 'Edit Brand' : 'Brand Details'}</span>
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => setIsEditMode(!isEditMode)}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg flex items-center gap-2"
-                  disabled={isLoading}
-                >
-                  <Pencil size={16} />
-                  {isEditMode ? 'Cancel Edit' : 'Edit'}
-                </Button>
-                <Button
-                  onClick={handleDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg flex items-center gap-2"
-                  disabled={isLoading}
-                >
-                  <Trash2 size={16} />
-                  Delete
-                </Button>
-              </div>
+              
             </Dialog.Title>
           </div>
 
@@ -159,20 +142,6 @@ const BrandDetailsDialog = ({
               </form>
             ) : (
               <div className="space-y-4">
-                <div className="relative w-full h-48">
-                  {brand.image ? (
-                    <Image
-                      src={`/${brand.image}`}
-                      alt={brand.name}
-                      fill
-                      className="object-cover rounded-lg"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                      No Image
-                    </div>
-                  )}
-                </div>
                 <div>
                   <h3 className="font-semibold">Name</h3>
                   <p>{brand.name}</p>

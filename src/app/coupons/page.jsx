@@ -16,7 +16,7 @@ export default function Coupons() {
     const [itemsPerPage] = useState(9);
     const [formData, setFormData] = useState({
         voucher: '',
-        coupon_codes: '',
+        coupon_codes: [''],
         
     });
     return (

@@ -13,18 +13,17 @@ export default function CouponsDialog({ isOpen, setIsOpen, formData, setFormData
     const [submitting, setSubmitting] = useState(false);
 
     const fetchVouchers = async () => {
-            try {
-                const response = await apiService.getVouchers();
-                setVouchers(response.data);
-            } catch (error) {
-                setError(error.message);
-            }
-        };
+        try {
+            const response = await apiService.getVouchers();
+            setVouchers(response.data);
+        } catch (error) {
+            setError(error.message);
+        }
+    };
     
-        useEffect(() => {
-            fetchVouchers();
-        }, []);
-
+    useEffect(() => {
+        fetchVouchers();
+    }, []);
 
     const handleVoucherChange = (e) => {
         const selectedVouchers = vouchers.find(vouchers => vouchers.name === e.target.value);
@@ -35,28 +34,34 @@ export default function CouponsDialog({ isOpen, setIsOpen, formData, setFormData
             });
         }
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
         setError(null);
         
         try {
+            // Convert comma-separated coupon codes to an array
+            const couponCodesArray = formData.coupons_id 
+                ? formData.coupons_id.split(',').map(code => code.trim()).filter(code => code !== '')
+                : [];
+
             // Prepare form data as a JavaScript object
             const formDataToSubmit = {
                 voucher_id: formData.voucher,
-                coupon_codes: formData.coupon_codes,
+                coupon_codes: couponCodesArray,
             };
     
             // Log the data being sent to the API
-            console.log( formDataToSubmit);
+            console.log(formDataToSubmit);
             
-            // Convert to JSON and send in the request body
+            // Send the request
             const response = await apiService.creatCoupons(JSON.stringify(formDataToSubmit), {});
             
             // Reset form and close dialog
             setFormData({
                 voucher: '',
-                coupon_codes: '',
+                coupons_id: '',
             });
             
             setIsOpen(false);

@@ -2,17 +2,16 @@ import React, { useState } from 'react';
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@nextui-org/react";
 import { Pencil, Trash2 } from 'lucide-react';
-import Image from 'next/image';
 
-const BrandDetailsDialog = ({ 
+const voucherDetailsDialog = ({ 
   isOpen, 
   setIsOpen, 
-  brand, 
+  voucher, 
   onEdit, 
   onDelete 
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editFormData, setEditFormData] = useState(brand);
+  const [editFormData, setEditFormData] = useState(voucher);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleEdit = async (e) => {
@@ -26,40 +25,40 @@ const BrandDetailsDialog = ({
         }
       });
 
-      const response = await fetch(`/api/brands/${brand.id}`, {
+      const response = await fetch(`/api/vouchers/${voucher.id}`, {
         method: 'PUT',
         body: data,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update brand');
+        throw new Error('Failed to update voucher');
       }
 
       onEdit();
       setIsEditMode(false);
     } catch (error) {
-      console.error('Error updating brand:', error);
+      console.error('Error updating voucher:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this brand?')) {
+    if (window.confirm('Are you sure you want to delete this voucher?')) {
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/brands/${brand.id}`, {
+        const response = await fetch(`/api/vouchers/${voucher.id}`, {
           method: 'DELETE',
         });
 
         if (!response.ok) {
-          throw new Error('Failed to delete brand');
+          throw new Error('Failed to delete voucher');
         }
 
         onDelete();
         setIsOpen(false);
       } catch (error) {
-        console.error('Error deleting brand:', error);
+        console.error('Error deleting voucher:', error);
       } finally {
         setIsLoading(false);
       }
@@ -74,25 +73,8 @@ const BrandDetailsDialog = ({
           {/* Header */}
           <div className="p-6 border-b">
             <Dialog.Title className="flex justify-between items-center">
-              <span className="text-xl font-bold">{isEditMode ? 'Edit Brand' : 'Brand Details'}</span>
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => setIsEditMode(!isEditMode)}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg flex items-center gap-2"
-                  disabled={isLoading}
-                >
-                  <Pencil size={16} />
-                  {isEditMode ? 'Cancel Edit' : 'Edit'}
-                </Button>
-                <Button
-                  onClick={handleDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg flex items-center gap-2"
-                  disabled={isLoading}
-                >
-                  <Trash2 size={16} />
-                  Delete
-                </Button>
-              </div>
+              <span className="text-xl font-bold">{isEditMode ? 'Edit voucher' : 'voucher Details'}</span>
+              
             </Dialog.Title>
           </div>
 
@@ -159,48 +141,52 @@ const BrandDetailsDialog = ({
               </form>
             ) : (
               <div className="space-y-4">
-                <div className="relative w-full h-48">
-                  {brand.image ? (
-                    <Image
-                      src={`/${brand.image}`}
-                      alt={brand.name}
-                      fill
-                      className="object-cover rounded-lg"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                      No Image
-                    </div>
-                  )}
-                </div>
                 <div>
                   <h3 className="font-semibold">Name</h3>
-                  <p>{brand.name}</p>
+                  <p>{voucher.name}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Description</h3>
-                  <p>{brand.description}</p>
+                  <p>{voucher.description}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Website</h3>
                   <a
-                    href={brand.website_url}
+                    href={voucher.website_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline"
                   >
-                    {brand.website_url}
+                    {voucher.website_url}
                   </a>
                 </div>
                 <div>
                   <h3 className="font-semibold">Business Category</h3>
                   <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
-                    {brand.business_category}
+                    {voucher.business_category}
                   </span>
                 </div>
               </div>
             )}
           </div>
+          <div className="flex gap-2">
+                <Button
+                  onClick={() => setIsEditMode(!isEditMode)}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg flex items-center gap-2"
+                  disabled={isLoading}
+                >
+                  <Pencil size={16} />
+                  {isEditMode ? 'Cancel Edit' : 'Edit'}
+                </Button>
+                <Button
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg flex items-center gap-2"
+                  disabled={isLoading}
+                >
+                  <Trash2 size={16} />
+                  Delete
+                </Button>
+              </div>
 
           {/* Footer */}
           <Dialog.Close asChild>
@@ -217,4 +203,4 @@ const BrandDetailsDialog = ({
   );
 };
 
-export default BrandDetailsDialog;
+export default voucherDetailsDialog;

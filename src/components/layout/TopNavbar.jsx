@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Navbar,
   NavbarContent,
@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import { Search, Bell, Calendar, Filter } from "lucide-react";
 import { useAuth } from '../auth/AuthProvider';
+import { apiService } from '@/services/api';
 
 const categories = [
   "SHOPPING",
@@ -26,12 +27,49 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const profileRef = useRef(null);
+  const filterRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setShowProfile(false);
+      }
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setShowFilter(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     day: 'numeric',
     month: 'short',
   });
+
+  // Get user's full name
+  const getFullName = () => {
+    if (user?.first_name && user?.last_name) {
+      return `${user.first_name} ${user.last_name}`;
+    }
+    return user?.username || "Unknown User";
+  };
+
+  // Get initial for avatar
+  const getInitial = () => {
+    if (user?.first_name) {
+      return user.first_name.charAt(0).toUpperCase();
+    }
+    if (user?.username) {
+      return user.username.charAt(0).toUpperCase();
+    }
+    return "U";
+  };
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
@@ -45,11 +83,13 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await apiService.logout();
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
+
+  console.log('Current user in TopNavbar:', user);
 
   return (
     <div className="relative">
@@ -107,21 +147,39 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
             <div className="relative">
               <Button 
                 onClick={() => setShowProfile(!showProfile)}
-                className="m-2 h-14 w-14 rounded-full bg-[#bcced5] flex items-center justify-center"
+                className="m-2 h-14 w-14 rounded-full bg-[#bcced5] flex items-center justify-center text-lg font-semibold text-gray-700"
               >
-                {user?.name?.charAt(0) || "U"}
+                {getInitial()}
               </Button>
 
               {showProfile && (
-                <div className="absolute top-full right-0 w-60 mt-2 p-4 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="text-center">
-                      <p className="text-[22px] font-bold">{user?.name || "Unknown User"}</p>
-                      <p className="text-xs text-gray-700 truncate">{user?.email || "No Email Available"}</p>
+                <div className="absolute top-full right-0 w-72 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  <div className="p-4 border-b border-gray-200">
+                    <div className="flex items-center space-x-3">
+                      <div className="h-12 w-12 rounded-full bg-[#bcced5] flex items-center justify-center text-lg font-semibold text-gray-700">
+                        {getInitial()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {getFullName()}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">
+                          {user?.email || "No email available"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-3">
+                    <div className="text-sm text-gray-500 mb-2">
+                      User ID: {user?.user_id || 'N/A'}
+                    </div>
+                    <div className="text-sm text-gray-500 mb-3">
+                      Phone: {user?.phone_number || 'N/A'}
                     </div>
                     <Button 
                       onClick={handleLogout}
-                      className="mt-2 w-full bg-red-500 text-white rounded-lg hover:bg-red-600"
+                      className="w-full bg-red-500 text-white rounded-lg hover:bg-red-600"
                     >
                       Logout
                     </Button>
