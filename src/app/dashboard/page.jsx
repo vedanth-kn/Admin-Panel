@@ -8,7 +8,7 @@ export default function Dashboard() {
 
   // Fetch name from localStorage or a state management library
   useEffect(() => {
-    const storedname = localStorage.getItem('name'); // Assuming you store it during login
+    const storedname = localStorage.getItem('username'); // Assuming you store it during login
     if (storedname) {
       setname(storedname);
     }

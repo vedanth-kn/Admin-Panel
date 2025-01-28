@@ -4,6 +4,8 @@ export const ENDPOINTS = {
       LOGIN: '/auth/login',
       LOGOUT: '/auth/logout',
       REGISTER: '/auth/register',
+      SEND_OTP: '/auth/send-otp',
+      VERIFY_OTP: '/auth/verify-otp',
     },
     BRANDS: {
       LIST: '/brand',

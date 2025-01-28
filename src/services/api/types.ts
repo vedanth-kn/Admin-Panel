@@ -47,3 +47,29 @@ export interface ApiResponse<T> {
     coupon_codes: number[];
   }
   
+  export interface SendOTP {
+    id: string;
+    phoneNumber: number;
+  }
+  
+  export interface UserData {
+    username: string;
+    email: string;
+    user_id: number;
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+  }
+  
+  export interface VerifyOTP {
+    token: string;
+    tokenType: string;
+    user: UserData;
+    expires_in: number;
+  }
+
+  export interface AuthContextType {
+    user: UserData | null;
+    setUser: (user: UserData | null) => void;
+    logout: () => void;
+  }

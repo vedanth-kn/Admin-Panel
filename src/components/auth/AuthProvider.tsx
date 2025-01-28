@@ -1,84 +1,34 @@
-// src/components/auth/AuthProvider.tsx
 'use client'
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-
-type User = {
-  email: string
-  name: string
-} | null
+import { apiService } from '@/services/api'
+import type { UserData } from '@/services/api/types'
 
 type AuthContextType = {
-  user: User
-  login: (credentials: { email: string; password: string }) => Promise<void>
-  logout: () => Promise<void>
+  user: UserData | null;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User>(null)
+  const [user, setUser] = useState<UserData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    // Initialize user from localStorage if available
-    const name = localStorage.getItem('name')
-    const email = localStorage.getItem('email')
-    
-    if (name && email) {
-      setUser({ name, email })
+    // Check if user data exists in cookies
+    const userData = apiService.getUser()
+    if (userData) {
+      setUser(userData)
     }
     setIsLoading(false)
   }, [])
 
-  const login = async (credentials: { email: string; password: string }) => {
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      })
-
-      if (!response.ok) {
-        throw new Error('Login failed')
-      }
-
-      const data = await response.json()
-      
-      // Update state and localStorage atomically
-      const userData = {
-        email: data.user.email,
-        name: data.user.name,
-      }
-      
-      setUser(userData)
-      localStorage.setItem('name', userData.name)
-      localStorage.setItem('email', userData.email)
-
-      router.push('/dashboard')
-    } catch (error) {
-      console.error('Login error:', error)
-      throw error
-    }
-  }
-
   const logout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      })
-      
-      if (!response.ok) {
-        throw new Error('Logout failed')
-      }
-
+      await apiService.logout()
       setUser(null)
-      localStorage.removeItem('name')
-      localStorage.removeItem('email')
-      
       router.push('/login')
     } catch (error) {
       console.error('Logout error:', error)
@@ -91,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, logout }}>
       {children}
     </AuthContext.Provider>
   )

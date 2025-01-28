@@ -28,6 +28,12 @@ export default function Brands() {
         brandImageUrl: '',
     });
 
+    // Helper function to get logo URL from media_details
+    const getLogoUrl = (mediaDetails) => {
+        const logoMedia = mediaDetails?.find(media => media.display_type === 'logo');
+        return logoMedia?.media_url || null;
+    };
+
     // Calculate current brands to display
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -35,10 +41,10 @@ export default function Brands() {
 
     const fetchBrands = async () => {
         try {
-          const response = await apiService.getBrands();
-          setBrands(response.data);
+            const response = await apiService.getBrands();
+            setBrands(response.data);
         } catch (error) {
-          setError(error.message);
+            setError(error.message);
         }
     };
 
@@ -110,6 +116,19 @@ export default function Brands() {
                                                 )}
                                             </div>
                                         </div>
+                                        {getLogoUrl(brand.media_details) && (
+                                            <div className="w-32 flex items-center justify-center flex-shrink-0">
+                                                <div className="flex items-center justify-center">
+                                                    <div className="relative w-32 h-32">
+                                                        <img
+                                                            src={getLogoUrl(brand.media_details)}
+                                                            alt={`${brand.name} logo`}
+                                                            className="absolute inset-0 w-full h-full object-contain"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
