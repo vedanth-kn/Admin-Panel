@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
-const { nextui } = require("@nextui-org/react");  // Keep this import
+const { heroui } = require("@heroui/react");  // Keep this import
 
 // Remove this line as it's causing a duplicate import
-// import {nextui} from '@nextui-org/theme';  
+// import {heroui} from '@heroui/theme';  
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -11,7 +11,7 @@ export default {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     // Update this line to include all NextUI components
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
     extend: {
@@ -22,5 +22,5 @@ export default {
     },
   },
   darkMode: "class", // Add this for dark mode support
-  plugins: [nextui()],
+  plugins: [heroui()],
 } satisfies Config;

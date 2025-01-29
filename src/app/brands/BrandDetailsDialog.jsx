@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as Dialog from "@radix-ui/react-dialog";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { Pencil, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 

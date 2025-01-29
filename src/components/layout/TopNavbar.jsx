@@ -8,10 +8,11 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/react";
-import { Search, Bell, Calendar, Filter } from "lucide-react";
+} from "@heroui/react";
+import { Search, Bell, Calendar, Filter, Moon, Sun } from "lucide-react";
 import { useAuth } from '../auth/AuthProvider';
 import { apiService } from '@/services/api';
+import { useTheme } from '@/contexts/ThemeProvider';
 
 const categories = [
   "SHOPPING",
@@ -24,6 +25,7 @@ const categories = [
 
 export const TopNavbar = ({ onFilterChange, onSearch }) => {
   const { user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [showProfile, setShowProfile] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -52,7 +54,6 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
     month: 'short',
   });
 
-  // Get user's full name
   const getFullName = () => {
     if (user?.first_name && user?.last_name) {
       return `${user.first_name} ${user.last_name}`;
@@ -60,7 +61,6 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
     return user?.username || "Unknown User";
   };
 
-  // Get initial for avatar
   const getInitial = () => {
     if (user?.first_name) {
       return user.first_name.charAt(0).toUpperCase();
@@ -89,12 +89,11 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
     }
   };
 
-  console.log('Current user in TopNavbar:', user);
-
+  
   return (
     <div className="relative">
       <Navbar 
-        className="sticky top-3 mt-3 ml-6 w-[97%] bg-white rounded-[12px]" 
+        className="sticky top-3 mt-3 ml-6 w-[97%] bg-white dark:bg-gray-800 rounded-[12px] transition-colors duration-200" 
         maxWidth="full"
         height="5rem"
       >
@@ -105,12 +104,12 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
                 classNames={{
                   base: "w-full",
                   mainWrapper: "h-full",
-                  input: "p-3 text-medium",
-                  inputWrapper: "h-full font-normal text-default-500 bg-[#D6DDE3] dark:bg-default-500/20 rounded-[30px]",
+                  input: "p-3 text-medium dark:text-white",
+                  inputWrapper: "h-full font-normal text-default-500 bg-[#D6DDE3] dark:bg-gray-700 rounded-[30px]",
                 }}
                 placeholder="Search..."
                 size="lg"
-                endContent={<Search size={20} className="text-black-500 mr-2" />}
+                endContent={<Search size={20} className="text-gray-500 dark:text-gray-400 mr-2" />}
                 type="search"
                 onChange={(e) => handleSearch(e.target.value)}
               />
@@ -120,7 +119,7 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
                 className="absolute right-12 top-1/2 transform -translate-y-1/2"
                 onClick={() => setShowFilter(!showFilter)}
               >
-                <Filter size={20} className="text-default-500" />
+                <Filter size={20} className="text-gray-500 dark:text-gray-400" />
               </Button>
             </div>
           </div>
@@ -128,42 +127,51 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
 
         <NavbarContent justify="end">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-default-500">
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
               <Calendar size={16} />
               <span>{currentDate}</span>
             </div>
 
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
-                <Button isIconOnly variant="light" className="text-default-500">
+                <Button isIconOnly variant="light" className="text-gray-500 dark:text-gray-400">
                   <Bell size={20} />
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu aria-label="Notifications">
-                <DropdownItem>No new notifications</DropdownItem>
+              <DropdownMenu aria-label="Notifications" className="dark:bg-gray-800 dark:text-white">
+                <DropdownItem className="dark:hover:bg-gray-700">No new notifications</DropdownItem>
               </DropdownMenu>
             </Dropdown>
+
+            <Button
+              isIconOnly
+              variant="light"
+              className="text-gray-500 dark:text-gray-400"
+              onClick={toggleTheme}
+            >
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            </Button>
 
             <div className="relative">
               <Button 
                 onClick={() => setShowProfile(!showProfile)}
-                className="m-2 h-14 w-14 rounded-full bg-[#bcced5] flex items-center justify-center text-lg font-semibold text-gray-700"
+                className="m-2 h-14 w-14 rounded-full bg-[#bcced5] dark:bg-gray-700 flex items-center justify-center text-lg font-semibold text-gray-700 dark:text-white"
               >
                 {getInitial()}
               </Button>
 
               {showProfile && (
-                <div className="absolute top-full right-0 w-72 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                  <div className="p-4 border-b border-gray-200">
+                <div className="absolute top-full right-0 w-72 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                  <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-center space-x-3">
-                      <div className="h-12 w-12 rounded-full bg-[#bcced5] flex items-center justify-center text-lg font-semibold text-gray-700">
+                      <div className="h-12 w-12 rounded-full bg-[#bcced5] dark:bg-gray-700 flex items-center justify-center text-lg font-semibold text-gray-700 dark:text-white">
                         {getInitial()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                           {getFullName()}
                         </p>
-                        <p className="text-sm text-gray-500 truncate">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                           {user?.email || "No email available"}
                         </p>
                       </div>
@@ -171,10 +179,10 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
                   </div>
                   
                   <div className="p-3">
-                    <div className="text-sm text-gray-500 mb-2">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
                       User ID: {user?.user_id || 'N/A'}
                     </div>
-                    <div className="text-sm text-gray-500 mb-3">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-3">
                       Phone: {user?.phone_number || 'N/A'}
                     </div>
                     <Button 
@@ -191,13 +199,14 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
         </NavbarContent>
       </Navbar>
 
-      {/* Filter Dropdown */}
       {showFilter && (
-        <div className="absolute top-20 left-[26rem] w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4">
-          <h3 className="font-semibold mb-2">Business Category</h3>
+        <div className="absolute top-20 left-[26rem] w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 p-4">
+          <h3 className="font-semibold mb-2 dark:text-white">Business Category</h3>
           <div className="space-y-2">
             <div 
-              className={`p-2 rounded cursor-pointer hover:bg-gray-100 ${selectedCategory === "" ? "bg-gray-100" : ""}`}
+              className={`p-2 rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                selectedCategory === "" ? "bg-gray-100 dark:bg-gray-700" : ""
+              } dark:text-white`}
               onClick={() => handleCategorySelect("")}
             >
               All Categories
@@ -205,7 +214,9 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
             {categories.map((category) => (
               <div
                 key={category}
-                className={`p-2 rounded cursor-pointer hover:bg-gray-100 ${selectedCategory === category ? "bg-gray-100" : ""}`}
+                className={`p-2 rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                  selectedCategory === category ? "bg-gray-100 dark:bg-gray-700" : ""
+                } dark:text-white`}
                 onClick={() => handleCategorySelect(category)}
               >
                 {category}
