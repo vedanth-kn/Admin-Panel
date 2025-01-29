@@ -2,7 +2,7 @@
 import { API_CONFIG } from './config';
 import { ENDPOINTS } from './endpoints';
 import Cookies from 'js-cookie';
-import type { ApiResponse, Brand, Voucher, Coupon, SendOTP, VerifyOTP } from './types';
+import type { ApiResponse, Brand, Voucher, Coupon, SendOTP, VerifyOTP, UserData } from './types';
 
 class ApiService {
   private getUrl(endpoint: string, queryParams?: Record<string, string>): string {

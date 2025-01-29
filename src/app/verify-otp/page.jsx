@@ -1,8 +1,8 @@
 // src/components/auth/LoginForm.tsx
 'use client'
 import { useState } from 'react'
-import { Input } from '@nextui-org/react'
-import { Alert } from '@nextui-org/react'
+import { Input } from "@heroui/react"
+import { Alert } from "@heroui/react"
 import '../../styles/login.css';
 
 export default function LoginForm() {

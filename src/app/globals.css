@@ -2,60 +2,148 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light mode variables */
+:root {
+  --background-color: #D6DDE3;
+  --container-bg: white;
+  --border-color: #cadce3;
+  --text-color: #1a1a1a;
+}
+
+/* Dark mode variables */
+:root[class~="dark"] {
+  --background-color: #1a1a1a;
+  --container-bg: #2d2d2d;
+  --border-color: #404040;
+  --text-color: #ffffff;
+}
+
+/* Base styles */
+html {
+  min-height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #D6DDE3;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
 }
 
-
-h1 {
-  font-size: 40px; 
-  font-weight: bold; 
+/* Fixed container styles */
+.fixed-container {
+  position: fixed;
+  top: 110px;
+  left: 280px;
+  right: 12px; /* 3 in Tailwind units */
+  bottom: 12px; /* 3 in Tailwind units */
+  background-color: var(--container-bg);
+  border: 4px solid var(--border-color);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 20px;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-h2 {
-  font-size: 28px;
+/* Dark mode specific styles */
+.dark .fixed-container {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-h3 {
-  font-size: 24px;
+/* Optional: Add hover effect */
+.fixed-container:hover {
+  border-color: var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-p {
-  font-size: 16px; /* Default font size for paragraphs */
+/* Optional: Add focus-within effect for when elements inside the container are focused */
+.fixed-container:focus-within {
+  border-color: var(--border-color);
+  box-shadow: 0 0 0 2px var(--border-color);
 }
 
+/* Container styles */
 .container {
   height: calc(100vh - 7.5rem);
   margin-top: -10px;
   margin-bottom: -10px;
   padding: 30px;
   width: 100.8%;
-  background-color: white;
+  background-color: var(--container-bg);
   border-radius: 12px;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.fixed-container {
-  position: fixed;
-  top: 130px;
-  left: 280px;
-  right: 3px;
-  bottom: 3px;
-  background-color: white;
-  border: 4px solid #cadce3;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding: 30px;
+/* Layout background */
+.min-h-screen {
+  background-color: var(--background-color) !important;
+  transition: background-color 0.2s ease-in-out;
 }
 
+/* Typography */
+h1 {
+  font-size: 40px; 
+  font-weight: bold;
+  color: var(--text-color);
+}
 
+h2 {
+  font-size: 28px;
+  color: var(--text-color);
+}
+
+h3 {
+  font-size: 24px;
+  color: var(--text-color);
+}
+
+p {
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+/* Page header */
 .page-header {
-  display: flex; /* flex */
-  justify-content: space-between; /* justify-between */
-  align-items: center; /* items-center */
-  margin-bottom: 6px; /* mb-6 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
   padding-bottom: 10px;
-  border-bottom: 1px solid gray; /* border-b border-gray-400 */
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Add smooth transitions for all color changes */
+* {
+  transition-property: color, background-color, border-color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+}
+
+/* Additional dark mode specific overrides if needed */
+.dark .container,
+.dark .fixed-container {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure text remains visible during dark mode */
+.dark input,
+.dark textarea,
+.dark select {
+  color: var(--text-color);
+  background-color: var(--container-bg);
+}
+
+/* Table styles for dark mode */
+.dark table {
+  border-color: var(--border-color);
+}
+
+.dark th,
+.dark td {
+  border-color: var(--border-color);
 }

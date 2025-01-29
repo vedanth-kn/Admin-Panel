@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Plus } from 'lucide-react';
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import CouponDialog from './CouponDialog';
 import Image from 'next/image';
 import Pagination from '../../components/Pagination';

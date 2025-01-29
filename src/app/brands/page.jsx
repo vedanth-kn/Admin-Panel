@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Plus } from 'lucide-react';
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import BrandDialog from './BrandDialog';
 import BrandDetailsDialog from './BrandDetailsDialog';
 import Pagination from '../../components/Pagination';
@@ -53,8 +53,8 @@ export default function Brands() {
     }, []);
     
     return (
-        <Layout>
-            <div className="fixed top-[110px] left-[280px] right-3 bottom-3 bg-white rounded-[12px] flex flex-col overflow-hidden p-[20]">
+        (<Layout>
+            <div className="fixed-container">
                 {/* Header */}
                 <div className="">
                     <div className="page-header flex justify-between items-center">
@@ -84,7 +84,7 @@ export default function Brands() {
                     </div>
                 ) : (
                     /* Brands Grid */
-                    <div className="flex-1 overflow-y-auto">
+                    (<div className="flex-1 overflow-y-auto">
                         <div className="p-6">
                             <div className="grid lg:grid-cols-3 gap-4">
                                 {currentBrands.map((brand) => (
@@ -133,7 +133,6 @@ export default function Brands() {
                                 ))}
                             </div>
                         </div>
-                        
                         <Pagination
                             currentPage={currentPage}
                             totalPages={Math.ceil(brands.length / itemsPerPage)}
@@ -141,7 +140,7 @@ export default function Brands() {
                             itemsPerPage={itemsPerPage}
                             totalItems={brands.length}
                         />
-                    </div>
+                    </div>)
                 )}
                 
                 <BrandDialog 
@@ -163,6 +162,6 @@ export default function Brands() {
                     />
                 )}
             </div>
-        </Layout>
+        </Layout>)
     );
 }

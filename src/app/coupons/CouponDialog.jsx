@@ -1,7 +1,7 @@
 'use client';
 import React, {useState, useEffect} from 'react';
 import { Label } from "@radix-ui/react-label";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronDown } from 'lucide-react';
 import { apiService } from '@/services/api';
