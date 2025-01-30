@@ -1,9 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
-import { Plus } from 'lucide-react';
-import { Button } from "@heroui/react";
-import BrandDialog from './BrandDialog';
+import { Plus, Globe } from 'lucide-react';
+import {Card, CardBody, Image, Button, CardHeader} from "@heroui/react";
+import BrandDialog from './BrandCreateDialog';
 import BrandDetailsDialog from './BrandDetailsDialog';
 import Pagination from '../../components/Pagination';
 import { apiService } from '@/services/api';
@@ -61,7 +61,7 @@ export default function Brands() {
                         <h1>BRANDS</h1>
                         <Button 
                             onPress={() => setIsOpen(true)} 
-                            className="bg-black text-white flex items-center gap-2 px-4 py-2 rounded-lg"
+                            className="add-button"
                             disabled={isLoading}
                         >
                             <Plus size={20} />
@@ -85,32 +85,28 @@ export default function Brands() {
                 ) : (
                     /* Brands Grid */
                     (<div className="flex-1 overflow-y-auto">
-                        <div className="p-6">
-                            <div className="grid lg:grid-cols-3 gap-4">
+                        
+                        <div className="p-6 ">
+                            <div className="grid lg:grid-cols-3 gap-4 ">
                                 {currentBrands.map((brand) => (
                                     <div 
                                         key={brand.id} 
-                                        className="border border-gray-900 rounded-lg p-4 shadow-sm flex gap-4 cursor-pointer hover:shadow-md transition-shadow"
+                                        className="border border-gray-900 rounded-xl p-4 shadow-sm flex gap-4 cursor-pointer hover:shadow-md transition-shadow dark:bg-gray-900 border-gray-900"
                                         onClick={() => {
                                             setSelectedBrand(brand);
                                             setIsDetailsOpen(true);
                                         }}
                                     >
                                         <div className="flex flex-col flex-1">
-                                            <h3 className="text-lg font-semibold mb-2">{brand.name}</h3>
-                                            <p className="text-gray-600 text-sm mb-2 line-clamp-2">{brand.description}</p>
+                                            <h3 className="font-semibold mb-2">{brand.name}</h3>
+                                            <p className="text-gray-600 text-sm mb-4 line-clamp-2 dark:text-gray-100">{brand.description}</p>
                                             <div className="mt-auto space-y-2">
-                                                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm inline-block">
+                                                <span className="bg-blue-100 mb-2 text-blue-800 px-2 py-1 rounded-full text-sm inline-block">
                                                     {brand.business_category}
-                                                </span>
+                                                </span><br></br>
                                                 {brand.website_url && (
-                                                    <a 
-                                                        href={brand.website_url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-blue-600 hover:underline text-sm block"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
+                                                    <a href={brand.website_url} target="_blank"className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg transition-colors">
+                                                        <Globe className="w-4 h-4" />
                                                         Visit Website
                                                     </a>
                                                 )}

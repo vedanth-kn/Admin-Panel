@@ -162,8 +162,8 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
     return (
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
-                <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg w-full max-w-4xl flex flex-col h-[90vh]" style={{ zIndex: 50 }}>
+                <Dialog.Overlay className="dialog-overlay" />
+                <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg w-full max-w-4xl flex flex-col h-[90vh] z-50 dark:bg-gray-900" >
                     {/* Fixed Header */}
                     <div className="p-6 border-b">
                         <Dialog.Title className="text-xl font-bold">Add New Voucher</Dialog.Title>
@@ -307,7 +307,7 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
                                     <div className="space-y-2">
                                         {formData.terms_and_conditions.map((term, index) => (
                                             <div key={index} className="flex gap-2 relative">
-                                                <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg">
+                                                <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg dark:bg-gray-700">
                                                     {index + 1}
                                                 </div>
                                                 <textarea
@@ -346,7 +346,7 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
                                     <div className="space-y-2">
                                         {formData.how_to_avail.map((item, index) => (
                                             <div key={index} className="flex gap-2 relative">
-                                                <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg">
+                                                <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg dark:bg-gray-700">
                                                     {index + 1}
                                                 </div>
                                                 <textarea
@@ -395,13 +395,21 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
                             <Button
                                 type="submit"
                                 form="voucherForm"
-                                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                className="add-button"
                                 disabled={submitting}
                             >
                                 {submitting ? 'Submitting...' : 'Add Voucher'}
                             </Button>
                         </div>
                     </div>
+                    <Dialog.Close asChild>
+                        <button
+                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                        aria-label="Close"
+                        >
+                        <X/>
+                        </button>
+                    </Dialog.Close>
                 </Dialog.Content>
             </Dialog.Portal>
         </Dialog.Root>

@@ -18,15 +18,15 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/login', 
-    '/dashboard', 
-    '/users', 
-    '/permissions', 
-    '/roles', 
-    '/settings', 
-    '/teams', 
-    '/vouchers',
-    '/brands',
-    '/coupons'
+    // '/login', 
+    // '/dashboard', 
+    // '/users', 
+    // '/permissions', 
+    // '/roles', 
+    // '/settings', 
+    // '/teams', 
+    // '/vouchers',
+    // '/brands',
+    // '/coupons'
   ]
 }

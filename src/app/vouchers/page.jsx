@@ -1,23 +1,29 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Plus } from 'lucide-react';
-import { Button } from "@heroui/react";
-import VoucherDialog from './VoucherDialog';
-import Image from 'next/image';
+import VoucherDialog from './VoucherCreateDialog';
 import Pagination from '../../components/Pagination';
-import VoucherDetailsDialog from './VoucherDetailsDialog'
+import VoucherDetailsDialog from './VoucherDetailsDialog';
 import { apiService } from '@/services/api';
+import VoucherCard from './VoucherCard';
+import { Button } from '@heroui/react';
 
 export default function Vouchers() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [vouchers, setVouchers] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(9);
-    const [selectedVoucher, setSelectedVoucher] = useState(null);
-    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    // State management with proper initialization
+    const [state, setState] = useState({
+        isOpen: false,
+        vouchers: [],
+        isLoading: true,
+        error: null,
+        currentPage: 1,
+        itemsPerPage: 9,
+        selectedVoucher: null,
+        isDetailsOpen: false,
+        brands: {},
+    });
+
     const [formData, setFormData] = useState({
         brand: '',
         name: '',
@@ -33,106 +39,121 @@ export default function Vouchers() {
         how_to_avail: [''],
     });
 
-    // Calculate current vouchers to display
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentVouchers= vouchers.slice(indexOfFirstItem, indexOfLastItem);
+    // Calculate pagination
+    const indexOfLastItem = state.currentPage * state.itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - state.itemsPerPage;
+    const currentVouchers = state.vouchers.slice(indexOfFirstItem, indexOfLastItem);
 
-    
-    const fetchVouchers = async () => {
+    // Data fetching with proper error handling
+    const fetchData = async () => {
         try {
-            const response = await apiService.getVouchers();
-            setVouchers(response.data);
+            setState(prev => ({ ...prev, isLoading: true }));
+            const [vouchersResponse, brandsResponse] = await Promise.all([
+                apiService.getVouchers(),
+                apiService.getBrands()
+            ]);
+
+            const brandsObj = brandsResponse.data.reduce((acc, brand) => {
+                acc[brand.id] = brand;
+                return acc;
+            }, {});
+
+            setState(prev => ({
+                ...prev,
+                vouchers: vouchersResponse.data,
+                brands: brandsObj,
+                isLoading: false,
+                error: null
+            }));
         } catch (error) {
-            setError(error.message);
+            setState(prev => ({
+                ...prev,
+                error: error.message,
+                isLoading: false
+            }));
         }
     };
 
     useEffect(() => {
-        fetchVouchers();
+        fetchData();
     }, []);
 
     return (
-        (<Layout>
-            <div className="fixed top-[110px] left-[280px] right-3 bottom-3 bg-white rounded-[12px] flex flex-col overflow-hidden p-[20]">
-                {/* Fixed Header */}
-                <div className="">
-                    <div className="page-header flex justify-between items-center">
-                        <h1>VOUCHERS</h1>
-                        <Button 
-                            onPress={() => setIsOpen(true)} 
-                            className="bg-black text-white flex items-center gap-2 px-4 py-2 rounded-lg"
-                            disabled={isLoading}
-                        >
-                            <Plus size={20} />
-                            Add New Voucher
-                        </Button>
-                    </div>
+        <Layout>
+            <div className="fixed-container">
+                <div className="page-header flex justify-between items-center p-">
+                    <h1 className="font-bold">VOUCHERS</h1>
+                    <Button
+                        onClick={() => setState(prev => ({ ...prev, isOpen: true }))}
+                        disabled={state.isLoading}
+                        className="flex items-center gap-2"
+                    >
+                        <Plus size={20} />
+                        Add New Voucher
+                    </Button>
                 </div>
 
-                {/* Error State */}
-                {error && (
+                {state.error && (
                     <div className="p-4 bg-red-50 text-red-600 mx-4 rounded">
-                        {error}
+                        {state.error}
                     </div>
                 )}
 
-                {/* Loading State */}
-                {isLoading ? (
-                    <div className="flex-1 flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+                {state.isLoading ? (
+                    <div className="flex-1 flex items-center justify-center p-8">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black" />
                     </div>
                 ) : (
-                    /* Scrollable Grid Container */
-                    (<div className="flex-1 overflow-y-auto">
+                    <div className="flex-1 overflow-y-auto">
                         <div className="p-6">
                             <div className="grid lg:grid-cols-3 gap-4">
-                                {currentVouchers.map((vouchers) => (
-                                    <div 
-                                        key={vouchers.id} 
-                                        className="border border-gray-900 rounded-lg p-4 shadow-sm flex gap-4 cursor-pointer hover:shadow-md transition-shadow"
-                                        onClick={() => {
-                                            setSelectedVoucher(vouchers);
-                                            setIsDetailsOpen(true);
-                                        }}
+                                {currentVouchers.map((voucher) => (
+                                    <div
+                                        key={voucher.id}
+                                        onClick={() => setState(prev => ({
+                                            ...prev,
+                                            selectedVoucher: voucher,
+                                            isDetailsOpen: true
+                                        }))}
+                                        className="cursor-pointer"
                                     >
-                                        <div className="flex flex-col flex-1">
-                                            <h3 className="text-lg font-semibold mb-2">{vouchers.name}</h3>
-                                            
-                                        </div>
+                                        <VoucherCard
+                                            voucher={voucher}
+                                            brand={state.brands[voucher.brand_id]}
+                                        />
                                     </div>
                                 ))}
                             </div>
                         </div>
                         <Pagination
-                            currentPage={currentPage}
-                            totalPages={Math.ceil(vouchers.length / itemsPerPage)}
-                            onPageChange={setCurrentPage}
-                            itemsPerPage={itemsPerPage}
-                            totalItems={vouchers.length}
+                            currentPage={state.currentPage}
+                            totalPages={Math.ceil(state.vouchers.length / state.itemsPerPage)}
+                            onPageChange={(page) => setState(prev => ({ ...prev, currentPage: page }))}
+                            itemsPerPage={state.itemsPerPage}
+                            totalItems={state.vouchers.length}
                         />
-                    </div>)
+                    </div>
                 )}
-                
-                <VoucherDialog 
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
+
+                <VoucherDialog
+                    isOpen={state.isOpen}
+                    setIsOpen={(isOpen) => setState(prev => ({ ...prev, isOpen }))}
                     formData={formData}
                     setFormData={setFormData}
-                    onSuccessfulSubmit={fetchVouchers}
-                    isLoading={isLoading}
+                    onSuccessfulSubmit={fetchData}
+                    isLoading={state.isLoading}
                 />
 
-                {selectedVoucher && (
+                {state.selectedVoucher && (
                     <VoucherDetailsDialog
-                        isOpen={isDetailsOpen}
-                        setIsOpen={setIsDetailsOpen}
-                        voucher={selectedVoucher}
-                        onEdit={fetchVouchers}
-                        onDelete={fetchVouchers}
+                        isOpen={state.isDetailsOpen}
+                        setIsOpen={(isOpen) => setState(prev => ({ ...prev, isDetailsOpen: isOpen }))}
+                        voucher={state.selectedVoucher}
+                        onEdit={fetchData}
+                        onDelete={fetchData}
                     />
                 )}
             </div>
-        </Layout>)
+        </Layout>
     );
 }
