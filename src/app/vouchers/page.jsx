@@ -8,7 +8,7 @@ import Pagination from '../../components/Pagination';
 import VoucherDetailsDialog from './VoucherDetailsDialog';
 import { apiService } from '@/services/api';
 import VoucherCard from './VoucherCard';
-import { Button } from '@heroui/react';
+import { Button, Alert } from '@heroui/react';
 
 export default function Vouchers() {
     // State management with proper initialization
@@ -39,6 +39,9 @@ export default function Vouchers() {
         how_to_avail: [''],
     });
 
+    
+    const [error, setError] = useState('')
+
     // Calculate pagination
     const indexOfLastItem = state.currentPage * state.itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - state.itemsPerPage;
@@ -66,11 +69,7 @@ export default function Vouchers() {
                 error: null
             }));
         } catch (error) {
-            setState(prev => ({
-                ...prev,
-                error: error.message,
-                isLoading: false
-            }));
+            setError(error.message);
         }
     };
 
@@ -81,7 +80,7 @@ export default function Vouchers() {
     return (
         <Layout>
             <div className="fixed-container">
-                <div className="page-header flex justify-between items-center p-">
+                <div className="page-header flex justify-between items-center">
                     <h1 className="font-bold">VOUCHERS</h1>
                     <Button
                         onClick={() => setState(prev => ({ ...prev, isOpen: true }))}
@@ -93,15 +92,15 @@ export default function Vouchers() {
                     </Button>
                 </div>
 
-                {state.error && (
-                    <div className="p-4 bg-red-50 text-red-600 mx-4 rounded">
-                        {state.error}
-                    </div>
-                )}
+                <div>
+                    {error && (
+                        <Alert color="danger" title={error}/>
+                    )}
+                </div>
 
                 {state.isLoading ? (
                     <div className="flex-1 flex items-center justify-center p-8">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black" />
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white" />
                     </div>
                 ) : (
                     <div className="flex-1 overflow-y-auto">

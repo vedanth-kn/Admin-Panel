@@ -2,6 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;  /* Slightly wider for light mode */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E0E0E0;  /* Light gray color */
+  border-radius: 20px;  /* More rounded corners */
+  border: 2px solid white;  /* White border for floating effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #CCCCCC;  /* Slightly darker on hover */
+}
+
+/* Hide the arrows/buttons */
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #E0E0E0 transparent;
+}
+
+/* Optional: If you want to ensure the scrollbar appears to float */
+*:hover::-webkit-scrollbar-thumb {
+  background: #E0E0E0;
+}
+
 /* Light mode variables */
 :root {
   --background-color: #D6DDE3;
