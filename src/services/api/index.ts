@@ -188,6 +188,13 @@ class ApiService {
     return Cookies.get('auth_token');
   }
 
+  private getUserId(): number {
+    const user = this.getUser();
+    if (!user || !user.user_id) {
+      throw new Error('User ID not found. Please login again.');
+    }
+    return user.user_id;
+  }
 
   // Brands API
   async getBrands(): Promise<ApiResponse<Brand[]>> {
@@ -239,7 +246,8 @@ class ApiService {
 
   // Vouchers API
   async getVouchers(): Promise<ApiResponse<Voucher[]>> {
-    const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.LIST), {
+    const userId = this.getUserId();
+    const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.LIST(userId)), {
       method: 'GET',
       credentials: API_CONFIG.CREDENTIALS,
       headers: API_CONFIG.getHeaders(),
@@ -249,7 +257,8 @@ class ApiService {
 
   async createVouchers(formData: FormData): Promise<ApiResponse<Voucher>> {
     try {
-      const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.CREATE), {
+      const userId = this.getUserId();
+      const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.CREATE(userId)), {
         method: 'POST',
         credentials: API_CONFIG.CREDENTIALS,
         headers: API_CONFIG.getHeaders(),
@@ -263,8 +272,8 @@ class ApiService {
   }
 
   async updateVoucher(id: string, formData: FormData): Promise<ApiResponse<Brand>> {
-    // Since we're sending JSON, we need to ensure the content type is set correctly
-    const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.UPDATE), {
+    const userId = this.getUserId();
+    const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.UPDATE(userId)), {
       method: 'PUT',
       credentials: API_CONFIG.CREDENTIALS,
       headers: API_CONFIG.getHeaders(),
@@ -277,7 +286,8 @@ class ApiService {
   }
 
   async softDeleteVoucher(id: string): Promise<ApiResponse<void>> {
-    const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.DELETE(id)), {
+    const userId = this.getUserId();
+    const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.DELETE(userId, id)), {
       method: 'DELETE',
       credentials: API_CONFIG.CREDENTIALS,
       headers: API_CONFIG.getHeaders()
