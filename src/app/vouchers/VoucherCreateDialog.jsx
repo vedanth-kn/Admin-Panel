@@ -1,10 +1,16 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Label } from "@radix-ui/react-label";
-import { Button } from "@heroui/react";
+import { Button, Autocomplete, AutocompleteItem, Input, Textarea } from "@heroui/react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Plus, X, ChevronDown } from 'lucide-react';
 import { apiService } from '@/services/api';
+
+const categories = [
+    {label: "Freedies", key: "FREEBIES"},
+    {label: "Excludive Deals", key: "EXCLUSIVE_DEALS"},
+    {label: "Gift Voucher", key: "GIFT_VOUCHER"},
+];
 
 const VoucherDialog = ({ 
     isOpen, 
@@ -172,7 +178,7 @@ const VoucherDialog = ({
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Portal>
                 <Dialog.Overlay className="dialog-overlay" />
-                <Dialog.Content className="dialog-content">
+                <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 rounded-xl w-full max-w-4xl shadow-lg flex flex-col max-h-[90vh] z-50">
                     <div className="p-6 border-b">
                         <Dialog.Title className="text-xl font-bold">
                             {editMode ? 'Edit Voucher' : 'Add New Voucher'}
@@ -184,7 +190,21 @@ const VoucherDialog = ({
                             <div className="grid grid-cols-3 gap-4">
                                 <div>
                                     <Label htmlFor="brand" className="block mb-2">Brand Name</Label>
-                                    <div className="relative">
+                                    <Autocomplete
+                                        className="max-w-xs"
+                                        label="Select a business category"
+                                        value={editMode ? (formData.brandName) : formData.brand} 
+                                        onChange={handleBrandChange}
+                                        disabled={isLoading || editMode}
+                                    >
+                                        {brands.map((brand) => (
+                                            <AutocompleteItem value={brand.value} key={brand.id}>
+                                                {brand.name}
+                                            </AutocompleteItem>
+                                        ))}
+                                    </Autocomplete>
+                                    
+                                    {/* <div className="relative">
                                         <select
                                             id="brand"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black appearance-none"
@@ -200,25 +220,23 @@ const VoucherDialog = ({
                                             ))}
                                         </select>
                                         <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
-                                    </div>
+                                    </div> */}
                                     {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
                                 </div>
                                 <div>
                                     <Label htmlFor="title" className="block mb-2">Voucher Name</Label>
-                                    <input
+                                    <Input
                                         id="name"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                        placeholder="Enter Voucher Name"
+                                        label="Enter voucher name"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     />
                                 </div>
                                 <div>
                                     <Label htmlFor="full_offer_description" className="block mb-2">Full Offer Description</Label>
-                                    <input
+                                    <Input
                                         id="full_offer_description"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                        placeholder="Enter Full Offer Description"
+                                        label="Enter full offer description"
                                         value={formData.full_offer_description}
                                         onChange={(e) => setFormData({ ...formData, full_offer_description: e.target.value })}
                                     />
@@ -227,31 +245,29 @@ const VoucherDialog = ({
                                 {/* Second Row */} 
                                 <div>
                                     <Label htmlFor="pre_offer_description" className="block mb-2">Pre Offer Description</Label>
-                                    <input
+                                    <Input
                                         id="pre_offer_description"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                        placeholder="Enter  Pre Offer Description"
+                                        label="Enter pre offer description"
                                         value={formData.pre_offer_description}
                                         onChange={(e) => setFormData({ ...formData, pre_offer_description: e.target.value })}
                                     />
                                 </div>
                                 <div>
                                     <Label htmlFor="voucher_url" className="block mb-2">Voucher URL</Label>
-                                    <input
+                                    <Input
                                         id="voucher_url"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                                         type="url"
-                                        placeholder="Enter Voucher URL"
+                                        label="Enter voucher URL"
                                         value={formData.voucher_url}
                                         onChange={(e) => setFormData({ ...formData, voucher_url: e.target.value })}
                                     />
                                 </div>
                                 <div>
                                     <Label htmlFor="start_date_time" className="block mb-2">Start Date Time</Label>
-                                    <input
+                                    <Input
                                         id="start_date_time"
                                         type="date"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                        label="Select start date"
                                         value={formData.start_date_time}
                                         onChange={(e) => setFormData({ ...formData, start_date_time: e.target.value })}
                                     />
@@ -260,27 +276,40 @@ const VoucherDialog = ({
                                 {/* Third Rrow */}
                                 <div>
                                     <Label htmlFor="end_date_time" className="block mb-2">End Date Time</Label>
-                                    <input
+                                    <Input
                                         id="end_date_time"
                                         type="date"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                        label="Select end date"
                                         value={formData.end_date_time}
                                         onChange={(e) => setFormData({ ...formData, end_date_time: e.target.value })}
                                     />
                                 </div>
                                 <div>
                                     <Label htmlFor="coins_to_redeem" className="block mb-2">Coins to Redeem</Label>
-                                    <input
+                                    <Input
                                         id="coins_to_redeem"
                                         type="number"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                        label="Enter number of coins to redeem"
                                         value={formData.coins_to_redeem}
                                         onChange={(e) => setFormData({ ...formData, coins_to_redeem: e.target.value })}
                                     />
                                 </div>
                                 <div>
                                     <Label htmlFor="voucher_type" className="block mb-2">Voucher Type</Label>
-                                    <select
+                                    <Autocomplete
+                                        className="max-w-xs"
+                                        label="Select a business category"
+                                        value={formData.voucher_type} 
+                                        onValueChange={(value) => setFormData({ ...formData, voucher_type: value })} 
+                                        >
+                                        {categories.map((category) => (
+                                            <AutocompleteItem value={category.value} key={category.key}>
+                                            {category.label}
+                                            </AutocompleteItem>
+                                        ))}
+                                    </Autocomplete>
+
+                                    {/* <select
                                         id="voucher_type"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                                         value={formData.voucher_type}
@@ -292,17 +321,16 @@ const VoucherDialog = ({
                                         <option value="FREEBIES">FREEBIES</option>
                                         <option value="EXCLUSIVE_DEALS">EXCLUSIVE DEALS</option>
                                         <option value="GIFT_VOUCHER">GIFT VOUCHER</option>
-                                    </select>
+                                    </select> */}
                                 </div>
 
                                 {/* Fourth Rrow */}
                                 <div>
                                     <Label htmlFor="productImageUrl" className="block mb-2">Product Image URL</Label>
-                                    <input
+                                    <Input
                                         id="productImageUrl"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                                         type="url"
-                                        placeholder="ENter Product Image URL"
+                                        label="Enter product URL"
                                         value={formData.productImageUrl}
                                         onChange={(e) => setFormData({ ...formData, productImageUrl: e.target.value })}
                                     />
@@ -318,7 +346,18 @@ const VoucherDialog = ({
                                                 <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg dark:bg-gray-700">
                                                     {index + 1}
                                                 </div>
-                                                <textarea
+
+                                                <Textarea 
+                                                    isClearable
+                                                    className="max-w-xs" 
+                                                    value={term}
+                                                    onChange={(e) => {
+                                                        e.target.style.height = 'auto';
+                                                        e.target.style.height = e.target.scrollHeight + 'px';
+                                                        handleTermChange(index, e.target.value);
+                                                    }}
+                                                />
+                                                {/* <textarea
                                                     className="flex-1 px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black min-h-[40px] resize-none overflow-hidden"
                                                     value={term}
                                                     onChange={(e) => {
@@ -328,7 +367,7 @@ const VoucherDialog = ({
                                                     }}
                                                     rows={1}
                                                     style={{ minHeight: '40px' }}
-                                                />
+                                                /> */}
                                                 <button
                                                     type="button"
                                                     className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 p-1"
