@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
 import * as Dialog from "@radix-ui/react-dialog";
-// import { Button } from "@heroui/react";
 import { Globe, X, Pencil, Trash2 } from 'lucide-react';
-import {Card, CardHeader, Image, CardBody, Button } from "@heroui/react";
+import { Card, CardHeader, Image, CardBody, Button } from "@heroui/react";
+import { apiService } from '@/services/api';
+import BrandDialog from './BrandCreateDialog';
 
 const BrandDetailsDialog = ({ isOpen, setIsOpen, brand, onEdit, onDelete }) => {
-  // Helper function to get logo URL
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    id: '',
+    name: '',
+    description: '',
+    website_url: '',
+    business_category: '',
+    logoUrl: '',
+    bannerUrl: '',
+    brandImageUrl: ''
+  });
+  
+  // Helper functions for media URLs
   const getLogoUrl = (mediaDetails) => {
     const logoMedia = mediaDetails?.find(media => media.display_type === 'logo');
     return logoMedia?.media_url || null;
@@ -21,60 +35,63 @@ const BrandDetailsDialog = ({ isOpen, setIsOpen, brand, onEdit, onDelete }) => {
     return bannerMedia?.media_url || null;
   };
 
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editFormData, setEditFormData] = useState(brand);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleEdit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const data = new FormData();
-      Object.keys(editFormData).forEach((key) => {
-        if (editFormData[key] !== null) {
-          data.append(key, editFormData[key]);
-        }
-      });
-
-      const response = await fetch(`/api/brand/${brand.id}`, {
-        method: 'PUT',
-        body: data,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update brand');
-      }
-
-      onEdit();
-      setIsEditMode(false);
-    } catch (error) {
-      console.error('Error updating brand:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleEditClick = () => {
+    // Prepare form data for editing
+    const formData = {
+      id: brand.id,
+      name: brand.name,
+      description: brand.description,
+      website_url: brand.website_url,
+      business_category: brand.business_category,
+      logoUrl: getLogoUrl(brand.media_details),
+      bannerUrl: getBannerUrl(brand.media_details),
+      brandImageUrl: getBrandUrl(brand.media_details),
+    };
+    
+    setEditFormData(formData);
+    setIsEditMode(true);
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this brand?')) {
+    if (window.confirm('Are you sure you want to deactivate this brand? It will no longer be visible in the brands list.')) {
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/brand/${brand.id}`, {
-          method: 'DELETE',
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to delete brand');
+        const response = await apiService.softDeleteBrand(brand.id);
+        
+        if (response.success) {
+          onDelete();
+          setIsOpen(false);
+        } else {
+          throw new Error(response.errorMessage || 'Failed to deactivate brand');
         }
-
-        onDelete();
-        setIsOpen(false);
       } catch (error) {
-        console.error('Error deleting brand:', error);
+        console.error('Error deactivating brand:', error);
       } finally {
         setIsLoading(false);
       }
     }
   };
+
+  const handleEditSuccess = () => {
+    setIsEditMode(false);
+    onEdit();
+  };
+
+  // Render edit dialog if in edit mode
+  if (isEditMode) {
+    return (
+      <BrandDialog
+        isOpen={isEditMode}
+        setIsOpen={setIsEditMode}
+        formData={editFormData}
+        setFormData={setEditFormData}
+        isLoading={isLoading}
+        onSuccessfulSubmit={handleEditSuccess}
+        editMode={true}
+        brandId={brand.id}
+      />
+    );
+  }
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -171,15 +188,23 @@ const BrandDetailsDialog = ({ isOpen, setIsOpen, brand, onEdit, onDelete }) => {
             </div>
             {/* Footer */}
             <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-6 items-center">
-              <Button onClick={() => setIsEditMode(!isEditMode)} className="px-4 py-2 bg-black dark:bg-gray-700 text-white rounded-lg flex items-center gap-2" disabled={isLoading}>
-                <Pencil size={16} />
-                {isEditMode ? 'Cancel Edit' : 'Edit'}
-              </Button>
-              <Button onClick={handleDelete} className="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg flex items-center gap-2" disabled={isLoading}>
-                <Trash2 size={16} />
-                Delete
-              </Button>
-            </div>
+            <Button 
+              onClick={handleEditClick}
+              className="px-4 py-2 bg-black dark:bg-gray-700 text-white rounded-lg flex items-center gap-2" 
+              disabled={isLoading}
+            >
+              <Pencil size={16} />
+              Edit
+            </Button>
+            <Button 
+              onClick={handleDelete} 
+              className="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg flex items-center gap-2" 
+              disabled={isLoading}
+            >
+              <Trash2 size={16} />
+              Delete
+            </Button>
+          </div>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

@@ -10,16 +10,14 @@ export const ENDPOINTS = {
     BRANDS: {
       LIST: '/brand',
       CREATE: '/brand',
-      UPDATE: (id: string) => `/brand/${id}`,
+      UPDATE: '/brand',
       DELETE: (id: string) => `/brand/${id}`,
-      GET_ONE: (id: string) => `/brand/${id}`,
     },
     VOUCHERS: {
       LIST: '/1/voucher',
       CREATE: '/1/voucher',
-      UPDATE: (id: string) => `/voucher/${id}`,
-      DELETE: (id: string) => `/voucher/${id}`,
-      GET_ONE: (id: string) => `/voucher/${id}`,
+      UPDATE: '/1/voucher',
+      DELETE: (id: string) => `/1/voucher/${id}`,
     },
     COUPONS: {
       CREATE: '/coupon',

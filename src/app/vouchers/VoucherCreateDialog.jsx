@@ -6,21 +6,54 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Plus, X, ChevronDown } from 'lucide-react';
 import { apiService } from '@/services/api';
 
-const categories = [
-    "FREEBIES", 
-    "EXCLUSIVE_DEALS", 
-    "GIFT_VOUCHER"];
-
-export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData, onSuccessfulSubmit }) {
+const VoucherDialog = ({ 
+    isOpen, 
+    setIsOpen, 
+    formData, 
+    setFormData, 
+    onSuccessfulSubmit,
+    editMode = false,
+    voucherId = null 
+}) => {
     const [brands, setBrands] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
 
+    // Initialize form data with empty values if not provided
+    useEffect(() => {
+        if (!formData) {
+            setFormData({
+                brand: '',
+                name: '',
+                full_offer_description: '',
+                pre_offer_description: '',
+                voucher_url: '',
+                start_date_time: '',
+                end_date_time: '',
+                coins_to_redeem: '',
+                voucher_type: '',
+                productImageUrl: '',
+                terms_and_conditions: [''],
+                how_to_avail: [''],
+            });
+        }
+    }, [formData, setFormData]);
+
     const fetchBrands = async () => {
         try {
             const response = await apiService.getBrands();
             setBrands(response.data);
+
+            if (editMode && formData.brand) {
+                const selectedBrand = response.data.find(brand => brand.id === formData.brand);
+                if (selectedBrand) {
+                    setFormData(prev => ({
+                        ...prev,
+                        brandName: selectedBrand.name // Store brand name for display
+                    }));
+                }
+            }
         } catch (error) {
             setError(error.message);
         }
@@ -53,6 +86,7 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
             terms_and_conditions: newTerms
         });
     };
+
     const handleHowToAvailChange = (index, value) => {
         const newItems = [...formData.how_to_avail];
         newItems[index] = value;
@@ -76,12 +110,7 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
             how_to_avail: newItems
         });
     };
-    const handleFileChange = (field) => (e) => {
-        setFormData({
-            ...formData,
-            [field]: e.target.files[0]
-        });
-    };
+
     const handleBrandChange = (e) => {
         const selectedBrand = brands.find(brand => brand.name === e.target.value);
         if (selectedBrand) {
@@ -98,8 +127,8 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
         setError(null);
         
         try {
-            // Prepare form data as a JavaScript object
             const formDataToSubmit = {
+                id: editMode ? voucherId : undefined,
                 brand_id: formData.brand,
                 name: formData.name,
                 full_offer_description: formData.full_offer_description,
@@ -119,74 +148,53 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
                         : []
                     ),
                 ],
-                terms_and_conditions: [...formData.terms_and_conditions, ''],
-                how_to_avail: [...formData.how_to_avail, ''],
+                terms_and_conditions: formData.terms_and_conditions.filter(term => term.trim() !== ''),
+                how_to_avail: formData.how_to_avail.filter(item => item.trim() !== ''),
             };
     
-            // Log the data being sent to the API
-            console.log(formDataToSubmit);
-            
-            // Convert to JSON and send in the request body
-            const response = await apiService.createVouchers(JSON.stringify(formDataToSubmit), {});
-            
-            // Reset form and close dialog
-            setFormData({
-                brand: '',
-                name: '',
-                full_offer_description: '',
-                pre_offer_description: '',
-                voucher_url: '',
-                start_date_time: '',
-                end_date_time: '',
-                coins_to_redeem: '',
-                voucher_type: '',
-                productImageUrl: '',
-                terms_and_conditions: [''],
-                how_to_avail: [''],
-            });
-    
-            // Optional callback for parent component to refresh brands
-            onSuccessfulSubmit?.();
-            
-            setIsOpen(false);
+            const response = editMode
+                ? await apiService.updateVoucher(voucherId, JSON.stringify(formDataToSubmit))
+                : await apiService.createVouchers(JSON.stringify(formDataToSubmit));
+
+            if (response.success) {
+                onSuccessfulSubmit?.();
+                setIsOpen(false);
+            }
         } catch (err) {
             setError(err.message);
-            console.error('Voucher creation error:', err);
+            console.error(editMode ? 'Voucher update error:' : 'Voucher creation error:', err);
         } finally {
             setSubmitting(false);
         }
     };
-    
-
 
     return (
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Portal>
                 <Dialog.Overlay className="dialog-overlay" />
-                <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg w-full max-w-4xl flex flex-col h-[90vh] z-50 dark:bg-gray-900" >
-                    {/* Fixed Header */}
+                <Dialog.Content className="dialog-content">
                     <div className="p-6 border-b">
-                        <Dialog.Title className="text-xl font-bold">Add New Voucher</Dialog.Title>
+                        <Dialog.Title className="text-xl font-bold">
+                            {editMode ? 'Edit Voucher' : 'Add New Voucher'}
+                        </Dialog.Title>
                     </div>
 
-                    {/* Scrollable Content */}
                     <div className="flex-1 overflow-y-auto p-6">
                         <form id="voucherForm" onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-3 gap-4">
-                                {/* First Row */}
                                 <div>
                                     <Label htmlFor="brand" className="block mb-2">Brand Name</Label>
                                     <div className="relative">
                                         <select
                                             id="brand"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black appearance-none"
-                                            value={formData.brand}
+                                            value={editMode ? (formData.brandName || '') : formData.brand}
                                             onChange={handleBrandChange}
-                                            disabled={isLoading}
+                                            disabled={isLoading || editMode}
                                         >
                                             <option value="">Select a brand</option>
                                             {brands.map((brand) => (
-                                                <option key={brand.id} value={brand.name}>
+                                                <option key={brand.id} value={editMode ? brand.name : brand.name}>
                                                     {brand.name}
                                                 </option>
                                             ))}
@@ -398,7 +406,7 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
                                 className="add-button"
                                 disabled={submitting}
                             >
-                                {submitting ? 'Submitting...' : 'Add Voucher'}
+                                {submitting ? 'Submitting...' : editMode ? 'Update Voucher' : 'Add Voucher'}
                             </Button>
                         </div>
                     </div>
@@ -415,3 +423,5 @@ export default function VoucherDialog({ isOpen, setIsOpen, formData, setFormData
         </Dialog.Root>
     );
 }
+
+export default VoucherDialog;

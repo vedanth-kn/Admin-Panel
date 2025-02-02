@@ -5,7 +5,6 @@ import { Plus, Globe } from 'lucide-react';
 import {Alert, Button, Pagination} from "@heroui/react";
 import BrandDialog from './BrandCreateDialog';
 import BrandDetailsDialog from './BrandDetailsDialog';
-// import Pagination from '../../components/Pagination';
 import { apiService } from '@/services/api';
 
 export default function Brands() {
@@ -14,10 +13,9 @@ export default function Brands() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(9);
+    const [itemsPerPage] = useState(12);
     const [selectedBrand, setSelectedBrand] = useState(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-    const [page, setPage] = React.useState(1);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -27,6 +25,7 @@ export default function Brands() {
         logoUrl: '',
         bannerUrl: '',
         brandImageUrl: '',
+        active: true // Add active field with default true
     });
 
     // Helper function to get logo URL from media_details
@@ -38,16 +37,41 @@ export default function Brands() {
     // Calculate current brands to display
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentBrands = brands.slice(indexOfFirstItem, indexOfLastItem);
 
     const fetchBrands = async () => {
+        setIsLoading(true);
         try {
             const response = await apiService.getBrands();
-            setBrands(response.data);
+            
+            // Log raw data for debugging
+            console.log('Raw response:', response);
+            
+            if (Array.isArray(response.data)) {
+                // Explicitly check the active property
+                const activeBrands = response.data.filter(brand => {
+                    console.log('Brand:', brand.name, 'Active status:', brand.active);
+                    // Convert to boolean if it's a string
+                    return brand.active === true || brand.active === 'true';
+                });
+                
+                console.log('Filtered active brands:', activeBrands);
+                // setBrands(activeBrands);
+                setBrands(response.data);
+            } else {
+                console.error('Invalid response format:', response);
+                setError('Invalid data format received');
+            }
         } catch (error) {
+            console.error('Error fetching brands:', error);
             setError(error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
+
+
+    // Get current brands after filtering
+    const currentBrands = brands.slice(indexOfFirstItem, indexOfLastItem);
 
     useEffect(() => {
         fetchBrands();
@@ -128,24 +152,19 @@ export default function Brands() {
                                 ))}
                             </div>
                         </div>
-                        {/* <Pagination
-                            currentPage={currentPage}
-                            totalPages={Math.ceil(brands.length / itemsPerPage)}
-                            onPageChange={setCurrentPage}
-                            itemsPerPage={itemsPerPage}
-                            totalItems={brands.length}
-                        /> */}
+                        <div className="flex w-full justify-center">
+                            <Pagination 
+                                isCompact
+                                showControls
+                                showShadow 
+                                color="primary"
+                                page={currentPage}
+                                total={Math.ceil(brands.length / itemsPerPage)}
+                                onChange={setCurrentPage} />
+                        </div>
                     </div>)
                 )}
-                <div className="flex w-full justify-center">
-                    <Pagination 
-                        isCompact
-                        showControls
-                        showShadow 
-                        color="primary"
-                        page={currentPage} total={Math.ceil(brands.length / itemsPerPage)}
-                        onChange={setCurrentPage} />
-                </div>
+                
                     
                 <BrandDialog 
                     isOpen={isOpen}

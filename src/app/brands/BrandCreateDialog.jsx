@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Label } from "@radix-ui/react-label";
 import { Button } from "@heroui/react";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -15,30 +15,77 @@ const categories = [
   "FOOD_AND_GROCERY",
 ];
 
-
-export default function BrandDialog ({ 
+const BrandDialog = ({ 
     isOpen, 
     setIsOpen, 
     formData, 
     setFormData,
     isLoading,
-    onSuccessfulSubmit  
-}) {
-    const [filteredOptions, setFilteredOptions] = useState(categories);
-    const [showDropdown, setShowDropdown] = useState(false);
+    onSuccessfulSubmit,
+    editMode = false,
+    brandId = null
+}) => {
 
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState(null);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [filteredOptions, setFilteredOptions] = useState(categories);
+
+    // Initialize form data with empty strings if not provided
+    useEffect(() => {
+        if (!formData) {
+            setFormData({
+                name: '',
+                description: '',
+                website_url: '',
+                business_category: '',
+                logoUrl: '',
+                bannerUrl: '',
+                brandImageUrl: ''
+            });
+        }
+    }, [formData, setFormData]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        setError(null);
+
+        try {
+            const formDataToSubmit = {
+                id: editMode ? brandId : undefined, // Include ID only in edit mode
+                name: formData.name,
+                description: formData.description,
+                website_url: formData.website_url,
+                business_category: formData.business_category,
+                active: true,
+                media_details: [
+                    ...(formData.logoUrl ? [{ display_type: 'logo', file_name: formData.logoUrl.split('/').pop(), media_url: formData.logoUrl }] : []),
+                    ...(formData.bannerUrl ? [{ display_type: 'banner', file_name: formData.bannerUrl.split('/').pop(), media_url: formData.bannerUrl }] : []),
+                    ...(formData.brandImageUrl ? [{ display_type: 'brand_image', file_name: formData.brandImageUrl.split('/').pop(), media_url: formData.brandImageUrl }] : []),
+                ],
+            };
+
+            const response = editMode
+                ? await apiService.updateBrand(brandId, JSON.stringify(formDataToSubmit))
+                : await apiService.createBrand(JSON.stringify(formDataToSubmit));
+
+            if (response.success) {
+                onSuccessfulSubmit?.();
+                setIsOpen(false);
+            }
+        } catch (err) {
+            setError(err.message);
+            console.error(editMode ? 'Brand update error:' : 'Brand creation error:', err);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+   
     const handleInputChange = (e) => {
         const value = e.target.value.toUpperCase();
         setFormData({ ...formData, business_category: value });
-
-        // Filter categories based on input
-        setFilteredOptions(
-            categories.filter((category) =>
-                category.includes(value)
-            )
-        );
-
-        // Show dropdown if value exists and matches are found
+        setFilteredOptions(categories.filter((category) => category.includes(value)));
         setShowDropdown(value !== "" && filteredOptions.length > 0);
     };
 
@@ -46,64 +93,18 @@ export default function BrandDialog ({
         setFormData({ ...formData, business_category: option });
         setShowDropdown(false);
     };
-    const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState(null);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setSubmitting(true);
-        setError(null);
-      
-        try {
-          // Prepare form data as a JavaScript object
-          const formDataToSubmit = {
-            name: formData.name,
-            description: formData.description,
-            website_url: formData.website_url,
-            business_category: formData.business_category,
-            media_details: [
-              ...(formData.logoUrl ? [{ display_type: 'logo', file_name: formData.logoUrl.split('/').pop(), media_url: formData.logoUrl }] : []),
-              ...(formData.bannerUrl ? [{ display_type: 'banner', file_name: formData.bannerUrl.split('/').pop(), media_url: formData.bannerUrl }] : []),
-              ...(formData.brandImageUrl ? [{ display_type: 'brand_image', file_name: formData.brandImageUrl.split('/').pop(), media_url: formData.brandImageUrl }] : []),
-            ],
-          };
-
-          console.log(formDataToSubmit)
-      
-          // Convert to JSON and send in the request body
-          const response = await apiService.createBrand(JSON.stringify(formDataToSubmit), {});
-      
-          // Reset form and close dialog
-          setFormData({
-            name: '',
-            description: '',
-            website_url: '',
-            business_category: '',
-            logoUrl: '',
-            bannerUrl: '',
-            brandImageUrl: '',
-          });
-      
-          // Optional callback for parent component to refresh brands
-          onSuccessfulSubmit?.();
-      
-          setIsOpen(false);
-        } catch (err) {
-          setError(err.message);
-          console.error('Brand creation error:', err);
-        } finally {
-          setSubmitting(false);
-        }
-      };
     
+
     return (
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Portal>
                 <Dialog.Overlay className="dialog-overlay" />
                 <Dialog.Content className="dialog-content">
-                    {/* Fixed Header */}
                     <div className="p-6 border-b">
-                        <Dialog.Title className="text-xl font-bold">Add New Brand</Dialog.Title>
+                        <Dialog.Title className="text-xl font-bold">
+                            {editMode ? 'Edit Brand' : 'Add New Brand'}
+                        </Dialog.Title>
                     </div>
 
                     {/* Scrollable Content */}
@@ -245,3 +246,5 @@ export default function BrandDialog ({
         </Dialog.Root>
     );
 }
+
+export default BrandDialog;

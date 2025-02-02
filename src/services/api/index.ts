@@ -215,19 +215,24 @@ class ApiService {
   }
 
   async updateBrand(id: string, formData: FormData): Promise<ApiResponse<Brand>> {
-    const response = await fetch(this.getUrl(ENDPOINTS.BRANDS.UPDATE(id)), {
+    // Since we're sending JSON, we need to ensure the content type is set correctly
+    const response = await fetch(this.getUrl(ENDPOINTS.BRANDS.UPDATE), {
       method: 'PUT',
       credentials: API_CONFIG.CREDENTIALS,
-      body: formData,
+      headers: API_CONFIG.HEADERS,
+      body: JSON.stringify({
+        id: id,
+        ...JSON.parse(formData as unknown as string) // Since formData is already a JSON string in your code
+      })
     });
     return this.handleResponse<Brand>(response);
   }
 
-  async deleteBrand(id: string): Promise<ApiResponse<void>> {
+  async softDeleteBrand(id: string): Promise<ApiResponse<void>> {
     const response = await fetch(this.getUrl(ENDPOINTS.BRANDS.DELETE(id)), {
       method: 'DELETE',
       credentials: API_CONFIG.CREDENTIALS,
-      headers: API_CONFIG.HEADERS,
+      headers: API_CONFIG.HEADERS
     });
     return this.handleResponse<void>(response);
   }
@@ -255,6 +260,29 @@ class ApiService {
       console.error('Create Voucher Error:', error);
       throw error;
     }
+  }
+
+  async updateVoucher(id: string, formData: FormData): Promise<ApiResponse<Brand>> {
+    // Since we're sending JSON, we need to ensure the content type is set correctly
+    const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.UPDATE), {
+      method: 'PUT',
+      credentials: API_CONFIG.CREDENTIALS,
+      headers: API_CONFIG.HEADERS,
+      body: JSON.stringify({
+        id: id,
+        ...JSON.parse(formData as unknown as string) // Since formData is already a JSON string in your code
+      })
+    });
+    return this.handleResponse<Brand>(response);
+  }
+
+  async softDeleteVoucher(id: string): Promise<ApiResponse<void>> {
+    const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.DELETE(id)), {
+      method: 'DELETE',
+      credentials: API_CONFIG.CREDENTIALS,
+      headers: API_CONFIG.HEADERS
+    });
+    return this.handleResponse<void>(response);
   }
 
   async creatCoupons(formData: FormData): Promise<ApiResponse<Coupon>> {

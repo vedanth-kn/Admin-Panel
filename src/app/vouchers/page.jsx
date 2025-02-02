@@ -4,11 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Plus } from 'lucide-react';
 import VoucherDialog from './VoucherCreateDialog';
-import Pagination from '../../components/Pagination';
 import VoucherDetailsDialog from './VoucherDetailsDialog';
 import { apiService } from '@/services/api';
 import VoucherCard from './VoucherCard';
-import { Button, Alert } from '@heroui/react';
+import { Button, Alert, Pagination } from '@heroui/react';
 
 export default function Vouchers() {
     // State management with proper initialization
@@ -26,7 +25,6 @@ export default function Vouchers() {
 
     const [formData, setFormData] = useState({
         brand: '',
-        name: '',
         full_offer_description: '',
         pre_offer_description: '',
         voucher_url: '',
@@ -40,7 +38,10 @@ export default function Vouchers() {
     });
 
     
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(12);
+    const [vouchers, setVouchers] = useState([]);
 
     // Calculate pagination
     const indexOfLastItem = state.currentPage * state.itemsPerPage;
@@ -77,6 +78,8 @@ export default function Vouchers() {
         fetchData();
     }, []);
 
+    console.log(formData);
+    
     return (
         <Layout>
             <div className="fixed-container">
@@ -85,7 +88,7 @@ export default function Vouchers() {
                     <Button
                         onClick={() => setState(prev => ({ ...prev, isOpen: true }))}
                         disabled={state.isLoading}
-                        className="flex items-center gap-2"
+                        className="add-button"
                     >
                         <Plus size={20} />
                         Add New Voucher
@@ -124,13 +127,16 @@ export default function Vouchers() {
                                 ))}
                             </div>
                         </div>
-                        <Pagination
-                            currentPage={state.currentPage}
-                            totalPages={Math.ceil(state.vouchers.length / state.itemsPerPage)}
-                            onPageChange={(page) => setState(prev => ({ ...prev, currentPage: page }))}
-                            itemsPerPage={state.itemsPerPage}
-                            totalItems={state.vouchers.length}
-                        />
+                        <div className="flex w-full justify-center">
+                            <Pagination 
+                                isCompact
+                                showControls
+                                showShadow 
+                                color="primary"
+                                page={currentPage}
+                                vtotal={Math.ceil(vouchers.length / itemsPerPage)}
+                                onChange={setCurrentPage} />
+                        </div>
                     </div>
                 )}
 
@@ -148,6 +154,7 @@ export default function Vouchers() {
                         isOpen={state.isDetailsOpen}
                         setIsOpen={(isOpen) => setState(prev => ({ ...prev, isDetailsOpen: isOpen }))}
                         voucher={state.selectedVoucher}
+                        brand={state.brands[state.selectedVoucher?.brand_id]}
                         onEdit={fetchData}
                         onDelete={fetchData}
                     />

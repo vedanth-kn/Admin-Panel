@@ -4,8 +4,6 @@ import Layout from '@/components/layout/Layout';
 import { Plus } from 'lucide-react';
 import { Button } from "@heroui/react";
 import CouponDialog from './CouponDialog';
-import Image from 'next/image';
-import Pagination from '../../components/Pagination';
 
 export default function Coupons() {
     const [isOpen, setIsOpen] = useState(false);
