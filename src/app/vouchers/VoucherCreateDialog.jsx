@@ -348,7 +348,6 @@ const VoucherDialog = ({
                                                 </div>
 
                                                 <Textarea 
-                                                    isClearable
                                                     className="max-w-xs" 
                                                     value={term}
                                                     onChange={(e) => {
@@ -396,7 +395,16 @@ const VoucherDialog = ({
                                                 <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg dark:bg-gray-700">
                                                     {index + 1}
                                                 </div>
-                                                <textarea
+                                                <Textarea 
+                                                    className="max-w-xs" 
+                                                    value={item}
+                                                    onChange={(e) => {
+                                                        e.target.style.height = 'auto';
+                                                        e.target.style.height = e.target.scrollHeight + 'px';
+                                                        handleTermChange(index, e.target.value);
+                                                    }}
+                                                />
+                                                {/* <textarea
                                                     className="flex-1 px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black min-h-[40px] resize-none overflow-hidden"
                                                     value={item}
                                                     onChange={(e) => {
@@ -406,7 +414,7 @@ const VoucherDialog = ({
                                                     }}
                                                     rows={1}
                                                     style={{ minHeight: '40px' }}
-                                                />
+                                                /> */}
                                                 <button
                                                     type="button"
                                                     className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 p-1"
