@@ -69,9 +69,9 @@ export default function LoginForm() {
         setSuccess('Login successful')
         setError('')
         
-        setTimeout(() => {
-          router.push('/dashboard')
-        }, 1000)
+        await new Promise(resolve => setTimeout(resolve, 100));
+      
+        window.location.href = '/dashboard';
       } else {
         setError(response.errorMessage || 'Invalid OTP')
       }

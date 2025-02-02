@@ -1,23 +1,23 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Label } from "@radix-ui/react-label";
-import { Button } from "@heroui/react";
+import { Button, Autocomplete, AutocompleteItem, Input } from "@heroui/react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from 'lucide-react';
 import { apiService } from '@/services/api';
+import { label } from 'framer-motion/client';
 
 const categories = [
-  "SHOPPING",
-  "TRAVEL",
-  "ENTERTAINMENT",
-  "UTILITY",
-  "FASHION",
-  "FOOD_AND_GROCERY",
+    {label: "Shopping", key: "SHOPPING"},
+    {label: "Travel", key: "TRAVEL"},
+    {label: "Fashion", key: "FASHION"},
+    {label: "Utility", key: "UTILITY"},
+    {label: "Food and Grocery", key: "FOOD_AND_GROCERY"},
 ];
 
 const BrandDialog = ({ 
     isOpen, 
-    setIsOpen, 
+    setIsOpen,  
     formData, 
     setFormData,
     isLoading,
@@ -114,22 +114,21 @@ const BrandDialog = ({
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <Label htmlFor="name" className="block mb-2">Brand Name</Label>
-                                    <input
+                                    <Input
+                                        isRequired
                                         id="name"
-                                        type="text"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                        placeholder="name"
+                                        type="naame"
+                                        label="Enter brand name"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     />
                                 </div>
                                 <div>
                                     <Label htmlFor="description" className="block mb-2">Description</Label>
-                                    <input
+                                    <Input 
                                         id="description"
+                                        label="Enter description"
                                         type="text"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                        placeholder="Description"
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     />
@@ -138,17 +137,30 @@ const BrandDialog = ({
                                 {/* Second Row */}
                                 <div>
                                     <Label htmlFor="website_url" className="block mb-2">Website URL</Label>
-                                    <input
+                                    <Input
                                         id="website_url"
-                                        type="text"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                        placeholder="Website URL"
+                                        type="url"
+                                        label="Enter website URL"
                                         value={formData.website_url}
                                         onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
                                     />
                                 </div>
                                 <div className="relative">
-                                    <Label htmlFor="business_category" className="block mb-2">Business Category</Label>
+                                <Label htmlFor="business_category" className="block mb-2">Business Category</Label>
+                                    <Autocomplete
+                                        className="max-w-xs"
+                                        label="Select a business category"
+                                        value={formData.business_category} 
+                                        onValueChange={(value) => setFormData({ ...formData, business_category: value })} 
+                                        >
+                                        {categories.map((category) => (
+                                            <AutocompleteItem value={category.value} key={category.key}>
+                                            {category.label}
+                                            </AutocompleteItem>
+                                        ))}
+                                    </Autocomplete>
+
+                                    {/* <Label htmlFor="business_category" className="block mb-2">Business Category</Label>
                                     <input
                                         id="business_category"
                                         type="text"
@@ -158,9 +170,9 @@ const BrandDialog = ({
                                         onChange={handleInputChange}
                                         onFocus={() => setShowDropdown(true)}
                                         onBlur={() => setTimeout(() => setShowDropdown(false), 200)} // Delay to allow option selection
-                                    />
+                                    /> */}
                                     {/* Dropdown */}
-                                    {showDropdown && (
+                                    {/* {showDropdown && (
                                         <ul className="absolute w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-40 overflow-y-auto z-10">
                                             {filteredOptions.length > 0 ? (
                                                 filteredOptions.map((option, index) => (
@@ -176,37 +188,37 @@ const BrandDialog = ({
                                                 <li className="px-3 py-2 text-gray-500">No matches found</li>
                                             )}
                                         </ul>
-                                    )}
+                                    )} */}
                                 </div>
 
                                 {/* Third Row */}
                                 <div>
                                     <label className="block text-sm font-medium mb-1">Logo URL</label>
-                                    <input
+                                    <Input
                                         type="url"
+                                        label="Enter logo URL"
                                         value={formData.logoUrl}
                                         onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                                    />
+                                   />
                                     </div>
 
                                     <div>
                                     <label className="block text-sm font-medium mb-1">Banner URL</label>
-                                    <input
+                                    <Input
                                         type="url"
+                                        label="Enter banner URL"
                                         value={formData.bannerUrl}
                                         onChange={(e) => setFormData({...formData, bannerUrl: e.target.value})}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                                     />
                                     </div>
                                     {/* Fourth Row */}
                                     <div>
                                     <label className="block text-sm font-medium mb-1">Brand Image URL</label>
-                                    <input
+                                    <Input
                                         type="url"
+                                        label="Enter brand URL"
                                         value={formData.brandImageUrl}
                                         onChange={(e) => setFormData({...formData, brandImageUrl: e.target.value})}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                                     />
                                 </div>
                             </div>

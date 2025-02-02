@@ -3,7 +3,18 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Link } from "@heroui/react";
-import { LayoutDashboard, Users, UserCircle, Shield, Lock, Settings, Ticket, Tag, Briefcase } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  Users, 
+  UserCircle, 
+  Shield, 
+  Lock, 
+  Settings, 
+  Ticket, 
+  Tag, 
+  Briefcase, 
+  Flag, 
+} from "lucide-react";
 
 export const Sidebar = () => {
   const navigation = [
@@ -14,6 +25,7 @@ export const Sidebar = () => {
     { name: 'Brands', href: '/brands', icon: Briefcase },
     { name: 'Vouchers', href: '/vouchers', icon: Ticket },
     { name: 'Coupons', href: '/coupons', icon: Tag },
+    { name: 'Milestones', href: '/milestones', icon: Flag },
     { name: 'Permissions', href: '/permissions', icon: Lock },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];

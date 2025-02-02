@@ -112,7 +112,7 @@ class ApiService {
         method: 'POST',
         credentials: API_CONFIG.CREDENTIALS,
         headers: {
-          ...API_CONFIG.HEADERS,
+          ...API_CONFIG.getHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data)
@@ -145,7 +145,7 @@ class ApiService {
       await fetch(this.getUrl(ENDPOINTS.AUTH.LOGOUT), {
         method: 'POST',
         credentials: API_CONFIG.CREDENTIALS,
-        headers: API_CONFIG.HEADERS,
+        headers: API_CONFIG.getHeaders(),
       });
 
       // Clear cookies
@@ -194,7 +194,7 @@ class ApiService {
     const response = await fetch(this.getUrl(ENDPOINTS.BRANDS.LIST), {
       method: 'GET',
       credentials: API_CONFIG.CREDENTIALS,
-      headers: API_CONFIG.HEADERS,
+      headers: API_CONFIG.getHeaders(),
     });
     return this.handleResponse<Brand[]>(response);
   }
@@ -204,7 +204,7 @@ class ApiService {
       const response = await fetch(this.getUrl(ENDPOINTS.BRANDS.CREATE), {
         method: 'POST',
         credentials: API_CONFIG.CREDENTIALS,
-        headers: API_CONFIG.HEADERS,
+        headers: API_CONFIG.getHeaders(),
         body: formData
       });
       return this.handleResponse<Brand>(response);
@@ -219,7 +219,7 @@ class ApiService {
     const response = await fetch(this.getUrl(ENDPOINTS.BRANDS.UPDATE), {
       method: 'PUT',
       credentials: API_CONFIG.CREDENTIALS,
-      headers: API_CONFIG.HEADERS,
+      headers: API_CONFIG.getHeaders(),
       body: JSON.stringify({
         id: id,
         ...JSON.parse(formData as unknown as string) // Since formData is already a JSON string in your code
@@ -232,7 +232,7 @@ class ApiService {
     const response = await fetch(this.getUrl(ENDPOINTS.BRANDS.DELETE(id)), {
       method: 'DELETE',
       credentials: API_CONFIG.CREDENTIALS,
-      headers: API_CONFIG.HEADERS
+      headers: API_CONFIG.getHeaders()
     });
     return this.handleResponse<void>(response);
   }
@@ -242,7 +242,7 @@ class ApiService {
     const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.LIST), {
       method: 'GET',
       credentials: API_CONFIG.CREDENTIALS,
-      headers: API_CONFIG.HEADERS,
+      headers: API_CONFIG.getHeaders(),
     });
     return this.handleResponse<Voucher[]>(response);
   }
@@ -252,7 +252,7 @@ class ApiService {
       const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.CREATE), {
         method: 'POST',
         credentials: API_CONFIG.CREDENTIALS,
-        headers: API_CONFIG.HEADERS,
+        headers: API_CONFIG.getHeaders(),
         body: formData
       });
       return this.handleResponse<Voucher>(response);
@@ -267,7 +267,7 @@ class ApiService {
     const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.UPDATE), {
       method: 'PUT',
       credentials: API_CONFIG.CREDENTIALS,
-      headers: API_CONFIG.HEADERS,
+      headers: API_CONFIG.getHeaders(),
       body: JSON.stringify({
         id: id,
         ...JSON.parse(formData as unknown as string) // Since formData is already a JSON string in your code
@@ -280,7 +280,7 @@ class ApiService {
     const response = await fetch(this.getUrl(ENDPOINTS.VOUCHERS.DELETE(id)), {
       method: 'DELETE',
       credentials: API_CONFIG.CREDENTIALS,
-      headers: API_CONFIG.HEADERS
+      headers: API_CONFIG.getHeaders()
     });
     return this.handleResponse<void>(response);
   }
@@ -290,7 +290,7 @@ class ApiService {
       const response = await fetch(this.getUrl(ENDPOINTS.COUPONS.CREATE), {
         method: 'POST',
         credentials: API_CONFIG.CREDENTIALS,
-        headers: API_CONFIG.HEADERS,
+        headers: API_CONFIG.getHeaders(),
         body: formData
       });
       return this.handleResponse<Coupon>(response);

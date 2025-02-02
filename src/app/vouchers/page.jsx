@@ -25,6 +25,7 @@ export default function Vouchers() {
 
     const [formData, setFormData] = useState({
         brand: '',
+        name: '',
         full_offer_description: '',
         pre_offer_description: '',
         voucher_url: '',
@@ -87,7 +88,7 @@ export default function Vouchers() {
                     <h1 className="font-bold">VOUCHERS</h1>
                     <Button
                         onClick={() => setState(prev => ({ ...prev, isOpen: true }))}
-                        disabled={state.isLoading}
+                        // disabled={state.isLoading}
                         className="add-button"
                     >
                         <Plus size={20} />
