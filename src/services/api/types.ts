@@ -18,14 +18,18 @@ export interface ApiResponse<T> {
     description: string;
     website_url: string;
     business_category: string;
-    mediaDetails?: MediaDetail[];
-  }
+    active: boolean | string; 
+    media_details?: MediaDetail[];
+    createdAt?: string;
+    updatedAt?: string;
+}
   
   export interface Voucher {
     id: string;
     brand_id: string;
     name: string;
-    description: string;
+    full_offer_description: string;
+    pre_offer_description: string;
     voucher_url: string;
     start_date_time: Date | string;
     end_date_time: Date | string;
@@ -66,10 +70,4 @@ export interface ApiResponse<T> {
     tokenType: string;
     user: UserData;
     expires_in: number;
-  }
-
-  export interface AuthContextType {
-    user: UserData | null;
-    setUser: (user: UserData | null) => void;
-    logout: () => void;
   }
