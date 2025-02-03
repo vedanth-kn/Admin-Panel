@@ -5,11 +5,12 @@ import { Button, Autocomplete, AutocompleteItem, Input, Textarea } from "@heroui
 import * as Dialog from "@radix-ui/react-dialog";
 import { Plus, X, ChevronDown } from 'lucide-react';
 import { apiService } from '@/services/api';
+import { label } from 'framer-motion/client';
 
-const categories = [
-    {label: "Freedies", key: "FREEBIES"},
-    {label: "Excludive Deals", key: "EXCLUSIVE_DEALS"},
-    {label: "Gift Voucher", key: "GIFT_VOUCHER"},
+const VOUCHER_TYPES = [
+    {label: "Freedies", value: "FREEBIES"},
+    {label: "Excludive Deals", value: "EXCLUSIVE_DEALS"},
+    {label: "Gift Voucher", value: "GIFT_VOUCHER"},
 ];
 
 const VoucherDialog = ({ 
@@ -25,6 +26,7 @@ const VoucherDialog = ({
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const [brandOptions, setBrandOptions] = useState([])
 
     // Initialize form data with empty values if not provided
     useEffect(() => {
@@ -46,28 +48,41 @@ const VoucherDialog = ({
         }
     }, [formData, setFormData]);
 
-    const fetchBrands = async () => {
-        try {
-            const response = await apiService.getBrands();
-            setBrands(response.data);
+    useEffect(() => {
+        const fetchBrands = async () => {
+            setIsLoading(true);
+            try {
+                const response = await apiService.getBrands();
+                if(response?.data) {
+                    setBrands(response.data)
 
-            if (editMode && formData.brand) {
-                const selectedBrand = response.data.find(brand => brand.id === formData.brand);
-                if (selectedBrand) {
-                    setFormData(prev => ({
-                        ...prev,
-                        brandName: selectedBrand.name // Store brand name for display
+                    const transformedBrands = response.data.map(brand => ({
+                        label: brand.name,
+                        value: brand.id.toString()
                     }));
+                    setBrandOptions(transformedBrands);
+                }
+
+                // Edit mode
+                if(editMode && formData?.brand) {
+                    const selectBrand = response.data.find(brand => brand.id === formData.brand);
+                    if(selectBrand) {
+                        setFormData(pre => ({
+                            ...pre,
+                            brand: selectBrand.id.toString(),
+                            brandName: selectBrand.name
+                        }))
+                    }
                 }
             }
-        } catch (error) {
-            setError(error.message);
-        }
-    };
-
-    useEffect(() => {
+            catch (err) {
+                setError('Failed to fetch brands: ' + err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
         fetchBrands();
-    }, []);
+    }, [editMode] )
 
     const handleTermAdd = () => {
         setFormData({
@@ -191,17 +206,26 @@ const VoucherDialog = ({
                                 <div>
                                     <Label htmlFor="brand" className="block mb-2">Brand Name</Label>
                                     <Autocomplete
+                                        id="brand"
                                         className="max-w-xs"
-                                        label="Select a business category"
-                                        value={editMode ? (formData.brandName) : formData.brand} 
-                                        onChange={handleBrandChange}
+                                        defaultItems={brandOptions}
+                                        label="Select a brand"
+                                        selectedKey={formData.brand}
+                                        onSelectionChange={(value) => {
+                                            const selectedBrand = brands.find(b => b.id.toString() === value);
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                brand: value,
+                                                brandName: selectedBrand?.name
+                                            }));
+                                        }}
                                         disabled={isLoading || editMode}
                                     >
-                                        {brands.map((brand) => (
-                                            <AutocompleteItem value={brand.value} key={brand.id}>
-                                                {brand.name}
+                                        {(item) => (
+                                            <AutocompleteItem key={item.value}>
+                                                {item.label}
                                             </AutocompleteItem>
-                                        ))}
+                                        )}
                                     </Autocomplete>
                                     
                                     {/* <div className="relative">
@@ -297,16 +321,23 @@ const VoucherDialog = ({
                                 <div>
                                     <Label htmlFor="voucher_type" className="block mb-2">Voucher Type</Label>
                                     <Autocomplete
+                                        id="voucher_type"
                                         className="max-w-xs"
-                                        label="Select a business category"
-                                        value={formData.voucher_type} 
-                                        onValueChange={(value) => setFormData({ ...formData, voucher_type: value })} 
-                                        >
-                                        {categories.map((category) => (
-                                            <AutocompleteItem value={category.value} key={category.key}>
-                                            {category.label}
+                                        defaultItems={VOUCHER_TYPES}
+                                        label="Select voucher type"
+                                        selectedKey={formData.voucher_type}
+                                        onSelectionChange={(value) => {
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                voucher_type: value
+                                            }));
+                                        }}
+                                    >
+                                        {(item) => (
+                                            <AutocompleteItem key={item.value}>
+                                                {item.label}
                                             </AutocompleteItem>
-                                        ))}
+                                        )}
                                     </Autocomplete>
 
                                     {/* <select

@@ -8,11 +8,11 @@ import { apiService } from '@/services/api';
 import { label } from 'framer-motion/client';
 
 const categories = [
-    {label: "Shopping", key: "SHOPPING"},
-    {label: "Travel", key: "TRAVEL"},
-    {label: "Fashion", key: "FASHION"},
-    {label: "Utility", key: "UTILITY"},
-    {label: "Food and Grocery", key: "FOOD_AND_GROCERY"},
+    {label: "Shopping", value: "SHOPPING"},
+    {label: "Travel", value: "TRAVEL"},
+    {label: "Fashion", value: "FASHION"},
+    {label: "Utility", value: "UTILITY"},
+    {label: "Food and Grocery", value: "FOOD_AND_GROCERY"},
 ];
 
 const BrandDialog = ({ 
@@ -65,6 +65,8 @@ const BrandDialog = ({
                     ...(formData.brandImageUrl ? [{ display_type: 'brand_image', file_name: formData.brandImageUrl.split('/').pop(), media_url: formData.brandImageUrl }] : []),
                 ],
             };
+
+            console.log(formDataToSubmit);
 
             const response = editMode
                 ? await apiService.updateBrand(brandId, JSON.stringify(formDataToSubmit))
@@ -146,18 +148,26 @@ const BrandDialog = ({
                                     />
                                 </div>
                                 <div className="relative">
-                                <Label htmlFor="business_category" className="block mb-2">Business Category</Label>
+                                    <Label htmlFor="business_category" className="block mb-2">Business Category</Label>
                                     <Autocomplete
+                                        id="business_category"
                                         className="max-w-xs"
+                                        defaultItems={categories}
                                         label="Select a business category"
-                                        value={formData.business_category} 
-                                        onValueChange={(value) => setFormData({ ...formData, business_category: value })} 
-                                        >
-                                        {categories.map((category) => (
-                                            <AutocompleteItem value={category.value} key={category.key}>
-                                            {category.label}
+                                        selectedKey={formData.business_category}
+                                        onSelectionChange={(value) => {
+                                            console.log('Selected category:', value);
+                                            setFormData({
+                                                ...formData,
+                                                business_category: value
+                                            });
+                                        }}
+                                    >
+                                        {(item) => (
+                                            <AutocompleteItem key={item.value}>
+                                            {item.label}
                                             </AutocompleteItem>
-                                        ))}
+                                        )}
                                     </Autocomplete>
 
                                     {/* <Label htmlFor="business_category" className="block mb-2">Business Category</Label>
