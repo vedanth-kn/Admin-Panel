@@ -43,18 +43,13 @@ export default function Brands() {
         try {
             const response = await apiService.getBrands();
             
-            // Log raw data for debugging
-            console.log('Raw response:', response);
-            
             if (Array.isArray(response.data)) {
                 // Explicitly check the active property
                 const activeBrands = response.data.filter(brand => {
-                    console.log('Brand:', brand.name, 'Active status:', brand.active);
                     // Convert to boolean if it's a string
                     return brand.active === true || brand.active === 'true';
                 });
                 
-                console.log('Filtered active brands:', activeBrands);
                 // setBrands(activeBrands);
                 setBrands(response.data);
             } else {
