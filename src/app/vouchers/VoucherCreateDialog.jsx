@@ -432,7 +432,7 @@ const VoucherDialog = ({
                                                     onChange={(e) => {
                                                         e.target.style.height = 'auto';
                                                         e.target.style.height = e.target.scrollHeight + 'px';
-                                                        handleTermChange(index, e.target.value);
+                                                        handleHowToAvailChange(index, e.target.value);
                                                     }}
                                                 />
                                                 {/* <textarea

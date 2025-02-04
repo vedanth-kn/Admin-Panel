@@ -2,7 +2,7 @@
 import { API_CONFIG } from './config';
 import { ENDPOINTS } from './endpoints';
 import Cookies from 'js-cookie';
-import type { ApiResponse, Brand, Voucher, Coupon, SendOTP, VerifyOTP, UserData } from './types';
+import type { ApiResponse, Brand, Voucher, Coupon, SendOTP, VerifyOTP, UserData, Milestone } from './types';
 
 class ApiService {
   private getUrl(endpoint: string, queryParams?: Record<string, string>): string {
@@ -305,9 +305,56 @@ class ApiService {
       });
       return this.handleResponse<Coupon>(response);
     } catch (error) {
-      console.error('Create Voucher Error:', error);
+      console.error('Create Coupone Error:', error);
       throw error;
     }
+  }
+
+  async getMilestones(): Promise<ApiResponse<Milestone[]>> {
+    const response = await fetch(this.getUrl(ENDPOINTS.MILESTONES.LIST), {
+      method: 'GET',
+      credentials: API_CONFIG.CREDENTIALS,
+      headers: API_CONFIG.getHeaders(),
+    });
+    return this.handleResponse<Milestone[]>(response);
+  }
+
+  async createMilestone(formData: FormData): Promise<ApiResponse<Milestone>> {
+    try {
+      const response = await fetch(this.getUrl(ENDPOINTS.MILESTONES.CREATE), {
+        method: 'POST',
+        credentials: API_CONFIG.CREDENTIALS,
+        headers: API_CONFIG.getHeaders(),
+        body: formData
+      });
+      return this.handleResponse<Milestone>(response)
+    } catch (error) {
+      console.error('Create Milestone Error:', error)
+      throw error;
+    }
+  }
+
+  async updateMilestone(id: string, formData: FormData): Promise<ApiResponse<Milestone>> {
+    // Since we're sending JSON, we need to ensure the content type is set correctly
+    const response = await fetch(this.getUrl(ENDPOINTS.MILESTONES.UPDATE), {
+      method: 'PUT',
+      credentials: API_CONFIG.CREDENTIALS,
+      headers: API_CONFIG.getHeaders(),
+      body: JSON.stringify({
+        id: id,
+        ...JSON.parse(formData as unknown as string) // Since formData is already a JSON string in your code
+      })
+    });
+    return this.handleResponse<Milestone>(response);
+  }
+
+  async softDeleteMilestone(id: string): Promise<ApiResponse<void>> {
+    const response = await fetch(this.getUrl(ENDPOINTS.MILESTONES.DELETE(id)), {
+      method: 'DELETE',
+      credentials: API_CONFIG.CREDENTIALS,
+      headers: API_CONFIG.getHeaders()
+    });
+    return this.handleResponse<void>(response);
   }
 
   
