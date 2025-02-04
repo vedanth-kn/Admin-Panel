@@ -26,4 +26,11 @@ export const ENDPOINTS = {
     COUPONS: {
       CREATE: '/coupon',
     },
+
+    MILESTONES: {
+      LIST: '/milestone',
+      CREATE: '/milestone',
+      UPDATE: '/milestone',
+      DELETE: (id: string) => `/milestone/${id}`,
+    },
   };

@@ -6,10 +6,47 @@ export interface ApiResponse<T> {
     errorMessage: string | null;
   }
 
+  export interface SendOTP {
+    id: string;
+    phoneNumber: number;
+  }
+  
+  export interface UserData {
+    username: string;
+    email: string;
+    user_id: number;
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+  }
+  
+  export interface VerifyOTP {
+    token: string;
+    tokenType: string;
+    user: UserData;
+    expires_in: number;
+  }
+
   export interface MediaDetail {
     display_type: string;
     file_name: string;
     media_url: string;
+  }
+
+  export interface User {
+    id: string;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    profile_picture: MediaDetail[];
+    date_of_birth: Date;
+    gender: string;
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    zip_code: string;
   }
   
   export interface Brand {
@@ -18,7 +55,7 @@ export interface ApiResponse<T> {
     description: string;
     website_url: string;
     business_category: string;
-    active: boolean | string; 
+    active: boolean; 
     media_details?: MediaDetail[];
     createdAt?: string;
     updatedAt?: string;
@@ -51,23 +88,15 @@ export interface ApiResponse<T> {
     coupon_codes: number[];
   }
   
-  export interface SendOTP {
+
+  export interface Milestone {
     id: string;
-    phoneNumber: number;
-  }
-  
-  export interface UserData {
-    username: string;
-    email: string;
-    user_id: number;
-    first_name: string;
-    last_name: string;
-    phone_number: string;
-  }
-  
-  export interface VerifyOTP {
-    token: string;
-    tokenType: string;
-    user: UserData;
-    expires_in: number;
+    name: string;
+    description: string;
+    target_value: number;
+    reward_coins: number;
+    milestone_type: string;
+    start_time: Date | string;
+    end_time: Date | string;
+    active: boolean;
   }

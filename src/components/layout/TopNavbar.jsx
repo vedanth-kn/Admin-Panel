@@ -14,15 +14,6 @@ import { useAuth } from '../auth/AuthProvider';
 import { apiService } from '@/services/api';
 import { useTheme } from '@/contexts/ThemeProvider';
 
-const categories = [
-  "SHOPPING",
-  "TRAVEL",
-  "ENTERTAINMENT",
-  "UTILITY",
-  "FASHION",
-  "FOOD_AND_GROCERY",
-];
-
 export const TopNavbar = ({ onFilterChange, onSearch }) => {
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
@@ -113,14 +104,7 @@ export const TopNavbar = ({ onFilterChange, onSearch }) => {
                 type="search"
                 onChange={(e) => handleSearch(e.target.value)}
               />
-              <Button
-                isIconOnly
-                variant="light"
-                className="absolute right-12 top-1/2 transform -translate-y-1/2"
-                onClick={() => setShowFilter(!showFilter)}
-              >
-                <Filter size={20} className="text-gray-500 dark:text-gray-400" />
-              </Button>
+              
             </div>
           </div>
         </NavbarContent>
