@@ -5,7 +5,6 @@ import { Button, Autocomplete, AutocompleteItem, Input } from "@heroui/react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from 'lucide-react';
 import { apiService } from '@/services/api';
-import { label } from 'framer-motion/client';
 
 const categories = [
     {label: "Orders", value: "ORDERS"},

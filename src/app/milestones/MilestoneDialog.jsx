@@ -3,49 +3,32 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Globe, X, Pencil, Trash2 } from 'lucide-react';
 import { Card, CardHeader, Image, CardBody, Button } from "@heroui/react";
 import { apiService } from '@/services/api';
-import BrandDialog from './MilestoneCreateDialog';
+import MilestoneCreateDialog from './MilestoneCreateDialog';
 
-const MilestoneDetailsDialog = ({ isOpen, setIsOpen, brand, onEdit, onDelete }) => {
+const MilestoneDetailsDialog = ({ isOpen, setIsOpen, milestone, onEdit, onDelete }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [editFormData, setEditFormData] = useState({
-    id: '',
     name: '',
     description: '',
-    website_url: '',
-    business_category: '',
-    logoUrl: '',
-    bannerUrl: '',
-    brandImageUrl: ''
+    target_value: 0,
+    reward_coins: 0,
+    milestone_type: '',
+    start_time: '',
+    end_time: ''
   });
-  
-  // Helper functions for media URLs
-  const getLogoUrl = (mediaDetails) => {
-    const logoMedia = mediaDetails?.find(media => media.display_type === 'logo');
-    return logoMedia?.media_url || null;
-  };
-
-  const getBrandUrl = (mediaDetails) => {
-    const brandMedia = mediaDetails?.find(media => media.display_type === 'brand_image');
-    return brandMedia?.media_url || null;
-  };
-
-  const getBannerUrl = (mediaDetails) => {
-    const bannerMedia = mediaDetails?.find(media => media.display_type === 'banner');
-    return bannerMedia?.media_url || null;
-  };
 
   const handleEditClick = () => {
     // Prepare form data for editing
     const formData = {
-      id: brand.id,
-      name: brand.name,
-      description: brand.description,
-      website_url: brand.website_url,
-      business_category: brand.business_category,
-      logoUrl: getLogoUrl(brand.media_details),
-      bannerUrl: getBannerUrl(brand.media_details),
-      brandImageUrl: getBrandUrl(brand.media_details),
+      id: milestone.id,
+      name: milestone.name,
+      description: milestone.description,
+      target_value: milestone.target_value,
+      reward_coins: milestone.reward_coins,
+      milestone_type: milestone.milestone_type,
+      start_time: milestone.start_time,
+      end_time: milestone.end_time,
     };
     
     setEditFormData(formData);
@@ -53,19 +36,19 @@ const MilestoneDetailsDialog = ({ isOpen, setIsOpen, brand, onEdit, onDelete }) 
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to deactivate this brand? It will no longer be visible in the brands list.')) {
+    if (window.confirm('Are you sure you want to deactivate this Milestone? It will no longer be visible in the Milestone list.')) {
       setIsLoading(true);
       try {
-        const response = await apiService.softDeleteBrand(brand.id);
+        const response = await apiService.softDeleteMilestone(milestone.id);
         
         if (response.success) {
           onDelete();
           setIsOpen(false);
         } else {
-          throw new Error(response.errorMessage || 'Failed to deactivate brand');
+          throw new Error(response.errorMessage || 'Failed to deactivate Milestone');
         }
       } catch (error) {
-        console.error('Error deactivating brand:', error);
+        console.error('Error deactivating Milestone:', error);
       } finally {
         setIsLoading(false);
       }
@@ -80,7 +63,7 @@ const MilestoneDetailsDialog = ({ isOpen, setIsOpen, brand, onEdit, onDelete }) 
   // Render edit dialog if in edit mode
   if (isEditMode) {
     return (
-      <BrandDialog
+      <MilestoneCreateDialog
         isOpen={isEditMode}
         setIsOpen={setIsEditMode}
         formData={editFormData}
@@ -88,7 +71,7 @@ const MilestoneDetailsDialog = ({ isOpen, setIsOpen, brand, onEdit, onDelete }) 
         isLoading={isLoading}
         onSuccessfulSubmit={handleEditSuccess}
         editMode={true}
-        brandId={brand.id}
+        MilestoneId={milestone.id}
       />
     );
   }
@@ -100,7 +83,7 @@ const MilestoneDetailsDialog = ({ isOpen, setIsOpen, brand, onEdit, onDelete }) 
         <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 rounded-xl w-full max-w-2xl shadow-lg flex flex-col max-h-[90vh] z-50">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <Dialog.Title className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Brand Details
+            Milestone Details
             </Dialog.Title>
             <Dialog.Close className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
@@ -109,81 +92,19 @@ const MilestoneDetailsDialog = ({ isOpen, setIsOpen, brand, onEdit, onDelete }) 
 
           <div className="flex-1 overflow-y-auto p-6 text-gray-900 dark:text-gray-100">
             <div className="flex flex-col gap-8">
-              <div className="flex items-start gap-6">
-
-                {/* Logo */}
-                {getLogoUrl(brand.media_details) && (
-                  <Card className="py-4 dark:bg-gray-800">
-                    <CardHeader className="pb-0 pt-0 px-4 flex-col items-start">
-                      <h4 className="font-bold text-large">Logo</h4>
-                    </CardHeader>
-                    <CardBody className="overflow-visible py-2">
-                      <Image
-                        alt={`${brand.name} logo`}
-                        className="object-cover rounded-xl"
-                        src={getLogoUrl(brand.media_details)}
-                        width={270}
-                      />
-                    </CardBody>
-                  </Card>
-                )}
-
-                {/* Brand */}
-                {getBrandUrl(brand.media_details) && (
-                  <Card className="py-4 dark:bg-gray-800">
-                    <CardHeader className="pb-0 pt-0 px-4 flex-col items-start">
-                      <h4 className="font-bold text-large">Brand</h4>
-                    </CardHeader>
-                    <CardBody className="overflow-visible py-2">
-                      <Image
-                        alt={`${brand.name} Brand`}
-                        className="object-cover rounded-xl"
-                        src={getBrandUrl(brand.media_details)}
-                        width={270}
-                      />
-                    </CardBody>
-                  </Card>
-                )}
-
-                {/* Banner */}
-                {getBannerUrl(brand.media_details) && (
-                  <Card className="py-4 dark:bg-gray-800">
-                    <CardHeader className="pb-0 pt-0 px-4 flex-col items-start">
-                      <h4 className="font-bold text-large">Banner</h4>
-                    </CardHeader>
-                    <CardBody className="overflow-visible py-2">
-                      <Image
-                        alt={`${brand.name} Banner`}
-                        className="object-cover rounded-xl"
-                        src={getBannerUrl(brand.media_details)}
-                        width={270}
-                      />
-                    </CardBody>
-                  </Card>
-                )}
-              </div>
+              
               {/* Basic Info */}
               <div className="flex justify-between items-center">
               <div>
                   <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</h3>
-                  <p className="mt-1 text-lg dark:text-gray-100">{brand.name}</p>
+                  <p className="mt-1 text-lg dark:text-gray-100">{milestone.name}</p>
                 </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Business Category</h3>
-                  <span className="font-bold dark:text-gray-100">
-                    {brand.business_category}
-                  </span>
-                </div>
-                <a href={brand.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg transition-colors">
-                  <Globe className="w-4 h-4" />
-                  Visit Website
-                </a>
               </div>
 
               {/* Description */}
               <div className='pb-4'>
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Description</h3>
-                <p className="text-gray-800 dark:text-gray-100 leading-relaxed">{brand.description}</p>
+                <p className="text-gray-800 dark:text-gray-100 leading-relaxed">{milestone.description}</p>
               </div>
             </div>
             {/* Footer */}
