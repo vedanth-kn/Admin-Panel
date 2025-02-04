@@ -175,7 +175,7 @@ const UserCreateDialog = ({
                                 <Select 
                                     id="gender"
                                     className="max-w-xs"
-                                    items={GENDER}
+                                    itemsa={GENDER}
                                     label="Select a gender"
                                     selectedKey={formData.gender}
                                     onSelectionChange={(value) => {

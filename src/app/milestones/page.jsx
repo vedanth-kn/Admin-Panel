@@ -111,31 +111,7 @@ export default function Milestones() {
                                         <div className="flex flex-col flex-1">
                                             <h3 className="font-semibold mb-2">{milestone.name}</h3>
                                             <p className="text-gray-600 text-sm mb-4 line-clamp-2 dark:text-gray-100">{milestone.description}</p>
-                                            <div className="mt-auto space-y-2">
-                                                <span className="bg-blue-100 mb-2 text-blue-800 px-2 py-1 rounded-full text-sm inline-block">
-                                                    {milestone.business_category}
-                                                </span><br></br>
-                                                {milestone.website_url && (
-                                                    <a href={milestone.website_url} target="_blank"className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg transition-colors">
-                                                        <Globe className="w-4 h-4" />
-                                                        Visit Website
-                                                    </a>
-                                                )}
-                                            </div>
-                                        </div>
-                                        {getLogoUrl(milestone.media_details) && (
-                                            <div className="w-32 flex items-center justify-center flex-shrink-0">
-                                                <div className="flex items-center justify-center">
-                                                    <div className="relative w-32 h-32">
-                                                        <img
-                                                            src={getLogoUrl(milestone.media_details)}
-                                                            alt={`${milestone.name} logo`}
-                                                            className="absolute inset-0 w-full h-full object-contain"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
+                                        </div> 
                                     </div>
                                 ))}
                             </div>
