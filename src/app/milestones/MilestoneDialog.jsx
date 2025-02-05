@@ -3,7 +3,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Globe, X, Pencil, Trash2 } from 'lucide-react';
 import { Card, CardHeader, Image, CardBody, Button } from "@heroui/react";
 import { apiService } from '@/services/api';
-import MilestoneCreateDialog from './MilestoneCreateDialog';
+import MilestoneCreateModal from './MilestoneCreateModal';
 
 const MilestoneDetailsDialog = ({ isOpen, setIsOpen, milestone, onEdit, onDelete }) => {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -63,7 +63,7 @@ const MilestoneDetailsDialog = ({ isOpen, setIsOpen, milestone, onEdit, onDelete
   // Render edit dialog if in edit mode
   if (isEditMode) {
     return (
-      <MilestoneCreateDialog
+      <MilestoneCreateModal
         isOpen={isEditMode}
         setIsOpen={setIsEditMode}
         formData={editFormData}

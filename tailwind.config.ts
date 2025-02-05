@@ -14,12 +14,12 @@ export default {
     "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
-    extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-      },
-    },
+	extend: {
+		colors: {
+			background: "var(--background)",
+			foreground: "var(--foreground)",
+		},
+	  },
   },
   darkMode: "class", // Add this for dark mode support
   plugins: [heroui()],

@@ -1,21 +1,30 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Label } from "@radix-ui/react-label";
-import { Button, Autocomplete, AutocompleteItem, Input, Textarea } from "@heroui/react";
-import * as Dialog from "@radix-ui/react-dialog";
-import { Plus, X, ChevronDown } from 'lucide-react';
+import { 
+    Button, 
+    Autocomplete, 
+    AutocompleteItem, 
+    Input, 
+    Modal, 
+    ModalContent, 
+    ModalHeader, 
+    ModalBody, 
+    ModalFooter, 
+    Textarea 
+} from "@heroui/react";
+import { Plus, X } from 'lucide-react';
 import { apiService } from '@/services/api';
-import { label } from 'framer-motion/client';
 
 const VOUCHER_TYPES = [
-    {label: "Freedies", value: "FREEBIES"},
-    {label: "Excludive Deals", value: "EXCLUSIVE_DEALS"},
+    {label: "Freebies", value: "FREEBIES"},
+    {label: "Exclusive Deals", value: "EXCLUSIVE_DEALS"},
     {label: "Gift Voucher", value: "GIFT_VOUCHER"},
 ];
 
 const VoucherDialog = ({ 
     isOpen, 
-    setIsOpen, 
+    onOpenChange, 
     formData, 
     setFormData, 
     onSuccessfulSubmit,
@@ -132,16 +141,6 @@ const VoucherDialog = ({
         });
     };
 
-    const handleBrandChange = (e) => {
-        const selectedBrand = brands.find(brand => brand.name === e.target.value);
-        if (selectedBrand) {
-            setFormData({
-                ...formData,
-                brand: selectedBrand.id,
-            });
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
@@ -179,7 +178,7 @@ const VoucherDialog = ({
 
             if (response.success) {
                 onSuccessfulSubmit?.();
-                setIsOpen(false);
+                onOpenChange(false);
             }
         } catch (err) {
             setError(err.message);
@@ -190,81 +189,68 @@ const VoucherDialog = ({
     };
 
     return (
-        <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-            <Dialog.Portal>
-                <Dialog.Overlay className="dialog-overlay" />
-                <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 rounded-xl w-full max-w-4xl shadow-lg flex flex-col max-h-[90vh] z-50">
-                    <div className="p-6 border-b">
-                        <Dialog.Title className="text-xl font-bold">
+        <Modal 
+            isOpen={isOpen} 
+            onOpenChange={onOpenChange}
+            scrollBehavior="inside"
+            size='4xl'
+            color='primary'
+            className='bg-white dark:bg-gray-900'
+        >
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">
                             {editMode ? 'Edit Voucher' : 'Add New Voucher'}
-                        </Dialog.Title>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto p-6">
-                        <form id="voucherForm" onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                    <Label htmlFor="brand" className="block mb-2">Brand Name</Label>
-                                    <Autocomplete
-                                        id="brand"
-                                        className="max-w-xs"
-                                        defaultItems={brandOptions}
-                                        label="Select a brand"
-                                        selectedKey={formData.brand}
-                                        onSelectionChange={(value) => {
-                                            const selectedBrand = brands.find(b => b.id.toString() === value);
-                                            setFormData(prev => ({
-                                                ...prev,
-                                                brand: value,
-                                                brandName: selectedBrand?.name
-                                            }));
-                                        }}
-                                        disabled={isLoading || editMode}
-                                    >
-                                        {(item) => (
-                                            <AutocompleteItem key={item.value}>
-                                                {item.label}
-                                            </AutocompleteItem>
-                                        )}
-                                    </Autocomplete>
-                                    
-                                    {/* <div className="relative">
-                                        <select
+                        </ModalHeader>
+                        
+                        <ModalBody>
+                            <form id="voucherForm" onSubmit={handleSubmit} className="space-y-4">
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <Label htmlFor="brand" className="block mb-2">Brand Name</Label>
+                                        <Autocomplete
                                             id="brand"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black appearance-none"
-                                            value={editMode ? (formData.brandName || '') : formData.brand}
-                                            onChange={handleBrandChange}
+                                            className="max-w-xs"
+                                            defaultItems={brandOptions}
+                                            label="Select a brand"
+                                            selectedKey={formData.brand}
+                                            onSelectionChange={(value) => {
+                                                const selectedBrand = brands.find(b => b.id.toString() === value);
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    brand: value,
+                                                    brandName: selectedBrand?.name
+                                                }));
+                                            }}
                                             disabled={isLoading || editMode}
                                         >
-                                            <option value="">Select a brand</option>
-                                            {brands.map((brand) => (
-                                                <option key={brand.id} value={editMode ? brand.name : brand.name}>
-                                                    {brand.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
-                                    </div> */}
-                                    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-                                </div>
-                                <div>
-                                    <Label htmlFor="title" className="block mb-2">Voucher Name</Label>
-                                    <Input
-                                        id="name"
-                                        label="Enter voucher name"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="full_offer_description" className="block mb-2">Full Offer Description</Label>
-                                    <Input
-                                        id="full_offer_description"
-                                        label="Enter full offer description"
-                                        value={formData.full_offer_description}
-                                        onChange={(e) => setFormData({ ...formData, full_offer_description: e.target.value })}
-                                    />
-                                </div>
+                                            {(item) => (
+                                                <AutocompleteItem key={item.value}>
+                                                    {item.label}
+                                                </AutocompleteItem>
+                                            )}
+                                        </Autocomplete>
+                                        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="name" className="block mb-2">Voucher Name</Label>
+                                        <Input
+                                            id="name"
+                                            label="Enter voucher name"
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="full_offer_description" className="block mb-2">Full Offer Description</Label>
+                                        <Input
+                                            id="full_offer_description"
+                                            label="Enter full offer description"
+                                            value={formData.full_offer_description}
+                                            onChange={(e) => setFormData({ ...formData, full_offer_description: e.target.value })}
+                                        />
+                                    </div>
 
                                 {/* Second Row */} 
                                 <div>
@@ -466,40 +452,30 @@ const VoucherDialog = ({
                                 </div>
                             </div>
                         </form>
-                    </div>
+                        </ModalBody>
 
-                    {/* Fixed Footer */}
-                    <div className="p-6 border-t">
-                        <div className="flex justify-end gap-2">
-                            <Button 
-                                type="button" 
-                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                type="submit"
-                                form="voucherForm"
-                                className="add-button"
-                                disabled={submitting}
-                            >
-                                {submitting ? 'Submitting...' : editMode ? 'Update Voucher' : 'Add Voucher'}
-                            </Button>
-                        </div>
-                    </div>
-                    <Dialog.Close asChild>
-                        <button
-                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-                        aria-label="Close"
-                        >
-                        <X/>
-                        </button>
-                    </Dialog.Close>
-                </Dialog.Content>
-            </Dialog.Portal>
-        </Dialog.Root>
-    );
+<ModalFooter>
+    <Button
+        color="danger"
+        variant="light"
+        onPress={onClose}
+    >
+        Cancel
+    </Button>
+    <Button
+        color="primary"
+        type="submit"
+        form="brandForm"
+        disabled={submitting}
+    >
+        {submitting ? 'Submitting...' : editMode ? 'Update Brand' : 'Add Brand'}
+    </Button>
+</ModalFooter>
+</>
+)}
+</ModalContent>
+</Modal>
+);
 }
 
 export default VoucherDialog;

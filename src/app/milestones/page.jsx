@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Plus, Globe } from 'lucide-react';
 import {Alert, Button, Pagination} from "@heroui/react";
-import MilestoneCreateDialog from './MilestoneCreateDialog';
+import MilestoneCreateModal from './MilestoneCreateModal';
 import MilestoneDetailsDialog from './MilestoneDialog';
 import { apiService } from '@/services/api';
 
@@ -130,9 +130,9 @@ export default function Milestones() {
                 )}
                 
                     
-                <MilestoneCreateDialog 
+                <MilestoneCreateModal 
                     isOpen={isOpen}
-                    setIsOpen={setIsOpen}
+                    onOpenChange={setIsOpen}
                     formData={formData}
                     setFormData={setFormData}
                     isLoading={isLoading}

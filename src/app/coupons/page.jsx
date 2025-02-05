@@ -19,14 +19,14 @@ export default function Coupons() {
     });
     return (
         <Layout>
-            <div className="fixed top-[110px] left-[280px] right-3 bottom-3 bg-white rounded-[12px] flex flex-col overflow-hidden p-[20]">
+            <div className="container">
                 {/* Fixed Header */}
                 <div className="">
                     <div className="page-header flex justify-between items-center">
                         <h1>COUPONS</h1>
                         <Button 
                             onPress={() => setIsOpen(true)} 
-                            className="bg-black text-white flex items-center gap-2 px-4 py-2 rounded-lg"
+                            className="add-button"
                             disabled={isLoading}
                         >
                             <Plus size={20} />
@@ -37,7 +37,7 @@ export default function Coupons() {
                 
                 <CouponDialog 
                     isOpen={isOpen}
-                    setIsOpen={setIsOpen}
+                    onOpenChange={setIsOpen}
                     formData={formData}
                     setFormData={setFormData}
                     isLoading={isLoading}

@@ -163,7 +163,7 @@ export default function Brands() {
                     
                 <BrandDialog 
                     isOpen={isOpen}
-                    setIsOpen={setIsOpen}
+                    onOpenChange={setIsOpen}
                     formData={formData}
                     setFormData={setFormData}
                     isLoading={isLoading}
