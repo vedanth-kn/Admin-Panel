@@ -2,7 +2,7 @@
 import { API_CONFIG } from './config';
 import { ENDPOINTS } from './endpoints';
 import Cookies from 'js-cookie';
-import type { ApiResponse, Brand, Voucher, Coupon, SendOTP, VerifyOTP, UserData, Milestone } from './types';
+import type { ApiResponse, Brand, Voucher, Coupon, SendOTP, VerifyOTP, UserData, Milestone, User } from './types';
 
 class ApiService {
   private getUrl(endpoint: string, queryParams?: Record<string, string>): string {
@@ -195,6 +195,54 @@ class ApiService {
     }
     return user.user_id;
   }
+
+  // User API
+  // async getUsers(): Promise<ApiResponse<User[]>> {
+  //   const response = await fetch(this.getUrl(ENDPOINTS.USERS.LIST), {
+  //     method: 'GET',
+  //     credentials: API_CONFIG.CREDENTIALS,
+  //     headers: API_CONFIG.getHeaders(),
+  //   });
+  //   return this.handleResponse<User[]>(response);
+  // }
+
+  async createUser(formData: FormData): Promise<ApiResponse<User>> {
+    try {
+      const response = await fetch(this.getUrl(ENDPOINTS.AUTH.REGISTER), {
+        method: 'POST',
+        credentials: API_CONFIG.CREDENTIALS,
+        headers: API_CONFIG.getHeaders(),
+        body: formData
+      });
+      return this.handleResponse<User>(response);
+    } catch (error) {
+      console.error('Create User Error:', error);
+      throw error;
+    }
+  }
+
+  // async updateUser(id: string, formData: FormData): Promise<ApiResponse<User>> {
+  //   // Since we're sending JSON, we need to ensure the content type is set correctly
+  //   const response = await fetch(this.getUrl(ENDPOINTS.USERS.UPDATE), {
+  //     method: 'PUT',
+  //     credentials: API_CONFIG.CREDENTIALS,
+  //     headers: API_CONFIG.getHeaders(),
+  //     body: JSON.stringify({
+  //       id: id,
+  //       ...JSON.parse(formData as unknown as string) // Since formData is already a JSON string in your code
+  //     })
+  //   });
+  //   return this.handleResponse<User>(response);
+  // }
+
+  // async softDeleteUser(id: string): Promise<ApiResponse<void>> {
+  //   const response = await fetch(this.getUrl(ENDPOINTS.USERS.DELETE(id)), {
+  //     method: 'DELETE',
+  //     credentials: API_CONFIG.CREDENTIALS,
+  //     headers: API_CONFIG.getHeaders()
+  //   });
+  //   return this.handleResponse<void>(response);
+  // }
 
   // Brands API
   async getBrands(): Promise<ApiResponse<Brand[]>> {

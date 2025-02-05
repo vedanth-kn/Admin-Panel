@@ -143,7 +143,7 @@ export default function Vouchers() {
 
                 <VoucherDialog
                     isOpen={state.isOpen}
-                    setIsOpen={(isOpen) => setState(prev => ({ ...prev, isOpen }))}
+                    onOpenChange={(isOpen) => setState(prev => ({ ...prev, isOpen }))}
                     formData={formData}
                     setFormData={setFormData}
                     onSuccessfulSubmit={fetchData}

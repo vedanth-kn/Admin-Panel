@@ -38,11 +38,11 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
 export default function Users() {
   const [isOpen, setIsOpen] = useState(false);
-  const [users1, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
+    phone_number: '',
     first_name: '',
     last_name: '',
     profileUrl: '',
@@ -54,36 +54,6 @@ export default function Users() {
     country: '',
     zip_code: '',
   });
-
-  const fetchUsers = async () => {
-      setIsLoading(true);
-      try {
-          const response = await apiService.getBrands();
-          
-          if (Array.isArray(response.data)) {
-              // Explicitly check the active property
-              const activeUsers = response.data.filter(users => {
-                  // Convert to boolean if it's a string
-                  return users.active === true || users.active === 'true';
-              });
-              
-              // setUsers(activeUsers);
-              setUsers(response.data);
-          } else {
-              console.error('Invalid response format:', response);
-              setError('Invalid data format received');
-          }
-      } catch (error) {
-          console.error('Error fetching users:', error);
-          setError(error.message);
-      } finally {
-          setIsLoading(false);
-      }
-  };
-
-  useEffect(() => {
-      fetchUsers();
-  }, []);
 
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -381,11 +351,10 @@ export default function Users() {
         </Table>
         <UserCreateDialog 
             isOpen={isOpen}
-            setIsOpen={setIsOpen}
+            onOpenChange={setIsOpen}
             formData={formData}
             setFormData={setFormData}
             isLoading={isLoading}
-            onSuccessfulSubmit={fetchUsers}
           />
       </div>
     </Layout>

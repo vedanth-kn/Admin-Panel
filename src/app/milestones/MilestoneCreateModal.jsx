@@ -15,38 +15,36 @@ import {
 import { apiService } from '@/services/api';
 
 const categories = [
-    {label: "Shopping", value: "SHOPPING"},
-    {label: "Travel", value: "TRAVEL"},
-    {label: "Fashion", value: "FASHION"},
-    {label: "Utility", value: "UTILITY"},
-    {label: "Food and Grocery", value: "FOOD_AND_GROCERY"},
+    {label: "Orders", value: "ORDERS"},
+    {label: "Brands", value: "BRANDS"},
+    {label: "Vouchers", value: "VOUCHERS"},
+    {label: "Games", value: "GAMES"},
 ];
 
-const BrandDialog = ({ 
+const MilestoneCreateModal = ({ 
     isOpen, 
-    onOpenChange,  
+    onOpenChange,
     formData, 
     setFormData,
     isLoading,
     onSuccessfulSubmit,
     editMode = false,
-    brandId = null
+    milestoneId = null
 }) => {
-
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const [filteredOptions, setFilteredOptions] = useState(categories);
 
-    // Initialize form data with empty strings if not provided
     useEffect(() => {
         if (!formData) {
             setFormData({
                 name: '',
                 description: '',
-                website_url: '',
-                business_category: '',
-                logoUrl: '',
-                bannerUrl: '',
-                brandImageUrl: ''
+                target_value: 0,
+                reward_coins: 0,
+                milestone_type: '',
+                start_time: '',
+                end_time: ''
             });
         }
     }, [formData, setFormData]);
@@ -58,30 +56,29 @@ const BrandDialog = ({
 
         try {
             const formDataToSubmit = {
-                id: editMode ? brandId : undefined,
+                id: editMode ? milestoneId : undefined,
                 name: formData.name,
                 description: formData.description,
-                website_url: formData.website_url,
-                business_category: formData.business_category,
+                target_value: Number(formData.target_value),
+                reward_coins: Number(formData.reward_coins),
+                milestone_type: formData.milestone_type,
+                start_time: formData.start_time,
+                end_time: formData.end_time,
                 active: true,
-                media_details: [
-                    ...(formData.logoUrl ? [{ display_type: 'logo', file_name: formData.logoUrl.split('/').pop(), media_url: formData.logoUrl }] : []),
-                    ...(formData.bannerUrl ? [{ display_type: 'banner', file_name: formData.bannerUrl.split('/').pop(), media_url: formData.bannerUrl }] : []),
-                    ...(formData.brandImageUrl ? [{ display_type: 'brand_image', file_name: formData.brandImageUrl.split('/').pop(), media_url: formData.brandImageUrl }] : []),
-                ],
             };
 
             const response = editMode
-                ? await apiService.updateBrand(brandId, JSON.stringify(formDataToSubmit))
-                : await apiService.createBrand(JSON.stringify(formDataToSubmit));
+                ? await apiService.updateMilestone(milestoneId, JSON.stringify(formDataToSubmit))
+                : await apiService.createMilestone(JSON.stringify(formDataToSubmit));
 
             if (response.success) {
                 onSuccessfulSubmit?.();
                 onOpenChange(false);
             }
+            console.log(formDataToSubmit)
         } catch (err) {
             setError(err.message);
-            console.error(editMode ? 'Brand update error:' : 'Brand creation error:', err);
+            console.error(editMode ? 'Milestone update error:' : 'Milestone creation error:', err);
         } finally {
             setSubmitting(false);
         }
@@ -100,19 +97,19 @@ const BrandDialog = ({
                 {(onClose) => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">
-                            {editMode ? 'Edit Brand' : 'Add New Brand'}
+                            {editMode ? 'Edit Milestone' : 'Add New Milestone'}
                         </ModalHeader>
                         
                         <ModalBody>
-                            <form id="brandForm" onSubmit={handleSubmit} className="space-y-4">
+                            <form id="milestoneForm" onSubmit={handleSubmit} className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label htmlFor="name" className="block mb-2">Brand Name</Label>
+                                        <Label htmlFor="name" className="block mb-2">Milestone Name</Label>
                                         <Input
                                             isRequired
                                             id="name"
                                             type="text"
-                                            label="Enter brand name"
+                                            label="Enter milestone name"
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         />
@@ -129,67 +126,68 @@ const BrandDialog = ({
                                     </div>
 
                                     <div>
-                                        <Label htmlFor="website_url" className="block mb-2">Website URL</Label>
+                                        <Label htmlFor="target_value" className="block mb-2">Target Value</Label>
                                         <Input
-                                            id="website_url"
-                                            type="url"
-                                            label="Enter website URL"
-                                            value={formData.website_url}
-                                            onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
+                                            id="target_value"
+                                            type="number"
+                                            value={formData.target_value}
+                                            label="Set the target value"
+                                            onChange={(e) => setFormData({ ...formData, target_value: e.target.value })}
                                         />
                                     </div>
-                                    
+
+                                    <div>
+                                        <Label htmlFor="reward_coins" className="block mb-2">Reward Coins</Label>
+                                        <Input
+                                            id="reward_coins"
+                                            type="number"
+                                            label="Set reward coins"
+                                            value={formData.reward_coins}
+                                            onChange={(e) => setFormData({...formData, reward_coins: e.target.value})}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="start_time" className="block mb-2">Start Date</Label>
+                                        <Input
+                                            id="start_time"
+                                            type="datetime-local"
+                                            value={formData.start_time}
+                                            onChange={(e) => setFormData({...formData, start_time: e.target.value})}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="end_time" className="block mb-2">End Date</Label>
+                                        <Input
+                                            id="end_time"
+                                            type="datetime-local"
+                                            value={formData.end_time}
+                                            onChange={(e) => setFormData({...formData, end_time: e.target.value})}
+                                        />
+                                    </div>
+
                                     <div className="relative">
-                                        <Label htmlFor="business_category" className="block mb-2">Business Category</Label>
+                                        <Label htmlFor="milestone_type" className="block mb-2">Milestone Type</Label>
                                         <Autocomplete
-                                            id="business_category"
+                                            id="milestone_type"
                                             className="max-w-xs"
                                             defaultItems={categories}
-                                            label="Select a business category"
-                                            selectedKey={formData.business_category}
+                                            label="Select a milestone type"
+                                            selectedKey={formData.milestone_type}
                                             onSelectionChange={(value) => {
                                                 setFormData({
                                                     ...formData,
-                                                    business_category: value
+                                                    milestone_type: value
                                                 });
                                             }}
                                         >
                                             {(item) => (
                                                 <AutocompleteItem key={item.value}>
-                                                {item.label}
+                                                    {item.label}
                                                 </AutocompleteItem>
                                             )}
                                         </Autocomplete>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium mb-1">Logo URL</label>
-                                        <Input
-                                            type="url"
-                                            label="Enter logo URL"
-                                            value={formData.logoUrl}
-                                            onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium mb-1">Banner URL</label>
-                                        <Input
-                                            type="url"
-                                            label="Enter banner URL"
-                                            value={formData.bannerUrl}
-                                            onChange={(e) => setFormData({...formData, bannerUrl: e.target.value})}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium mb-1">Brand Image URL</label>
-                                        <Input
-                                            type="url"
-                                            label="Enter brand URL"
-                                            value={formData.brandImageUrl}
-                                            onChange={(e) => setFormData({...formData, brandImageUrl: e.target.value})}
-                                        />
                                     </div>
                                 </div>
                             </form>
@@ -206,10 +204,10 @@ const BrandDialog = ({
                             <Button
                                 color="primary"
                                 type="submit"
-                                form="brandForm"
+                                form="milestoneForm"
                                 disabled={submitting}
                             >
-                                {submitting ? 'Submitting...' : editMode ? 'Update Brand' : 'Add Brand'}
+                                {submitting ? 'Submitting...' : editMode ? 'Update Milestone' : 'Add Milestone'}
                             </Button>
                         </ModalFooter>
                     </>
@@ -219,4 +217,4 @@ const BrandDialog = ({
     );
 }
 
-export default BrandDialog;
+export default MilestoneCreateModal;
