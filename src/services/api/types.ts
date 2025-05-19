@@ -18,6 +18,9 @@ export interface ApiResponse<T> {
     first_name: string;
     last_name: string;
     phone_number: string;
+    gender: string;
+    profile_picture: string;
+    date_of_birth: string
   }
   
   export interface VerifyOTP {

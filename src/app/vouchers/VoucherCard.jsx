@@ -24,7 +24,6 @@ const VoucherCard = ({ voucher, brand }) => {
                   className="w-10 h-10 rounded-sm"
                   src={getLogo(brand.media_details)}
                   onError={(e) => {
-                    e.target.src = '/api/placeholder/40/40';
                     e.target.onerror = null;
                   }}
                 />

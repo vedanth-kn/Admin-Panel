@@ -194,7 +194,6 @@ const VoucherDialog = ({
             onOpenChange={onOpenChange}
             scrollBehavior="inside"
             size='4xl'
-            color='primary'
             className='bg-white dark:bg-gray-900'
         >
             <ModalContent>

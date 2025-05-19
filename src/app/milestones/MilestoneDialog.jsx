@@ -106,6 +106,26 @@ const MilestoneDetailsDialog = ({ isOpen, setIsOpen, milestone, onEdit, onDelete
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Description</h3>
                 <p className="text-gray-800 dark:text-gray-100 leading-relaxed">{milestone.description}</p>
               </div>
+              <div className='pb-4'>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Target Coin</h3>
+                <p className="text-gray-800 dark:text-gray-100 leading-relaxed">{milestone.target_value}</p>
+              </div>
+              <div className='pb-4'>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Reward Coin</h3>
+                <p className="text-gray-800 dark:text-gray-100 leading-relaxed">{milestone.reward_coins}</p>
+              </div>
+              <div className='pb-4'>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Milestone Type</h3>
+                <p className="text-gray-800 dark:text-gray-100 leading-relaxed">{milestone.milestone_type}</p>
+              </div>
+              <div className='pb-4'>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Start Date</h3>
+                <p className="text-gray-800 dark:text-gray-100 leading-relaxed">{milestone.start_time}</p>
+              </div>
+              <div className='pb-4'>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">End Date</h3>
+                <p className="text-gray-800 dark:text-gray-100 leading-relaxed">{milestone.end_time}</p>
+              </div>
             </div>
             {/* Footer */}
             <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-6 items-center">

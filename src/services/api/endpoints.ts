@@ -8,11 +8,15 @@ export const ENDPOINTS = {
       SEND_OTP: '/auth/send-otp',
       VERIFY_OTP: '/auth/verify-otp',
     },
+    
+    USERS: {
+      LIST: '/users'
+    },
 
     BRANDS: {
       LIST: '/brand',
       CREATE: '/brand',
-      UPDATE: '/brand',
+      UPDATE: (userId: number) => `/brand/${userId}`,
       DELETE: (id: string) => `/brand/${id}`,
     },
     

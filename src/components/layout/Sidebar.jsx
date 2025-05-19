@@ -20,14 +20,14 @@ export const Sidebar = () => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Users', href: '/users', icon: Users },
-    { name: 'Teams', href: '/teams', icon: UserCircle },
-    { name: 'Roles', href: '/roles', icon: Shield },
+    // { name: 'Teams', href: '/teams', icon: UserCircle },
+    // { name: 'Roles', href: '/roles', icon: Shield },
     { name: 'Brands', href: '/brands', icon: Briefcase },
     { name: 'Vouchers', href: '/vouchers', icon: Ticket },
     { name: 'Coupons', href: '/coupons', icon: Tag },
     { name: 'Milestones', href: '/milestones', icon: Flag },
-    { name: 'Permissions', href: '/permissions', icon: Lock },
-    { name: 'Settings', href: '/settings', icon: Settings },
+    // { name: 'Permissions', href: '/permissions', icon: Lock },
+    // { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   const [name, setUsername] = useState('');

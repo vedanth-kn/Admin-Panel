@@ -6,7 +6,8 @@ import type { ApiResponse, Brand, Voucher, Coupon, SendOTP, VerifyOTP, UserData,
 
 class ApiService {
   private getUrl(endpoint: string, queryParams?: Record<string, string>): string {
-    const baseUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.API_VERSION}${endpoint}`;
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const baseUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.API_VERSION}${normalizedEndpoint}`;
     
     if (!queryParams) {
       return baseUrl;
@@ -63,7 +64,10 @@ class ApiService {
       user_id: user.user_id || 0,
       first_name: user.first_name || '',
       last_name: user.last_name || '',
-      phone_number: user.phone_number || ''
+      phone_number: user.phone_number || '',
+      gender: user.gender || '',
+      profile_picture: user.profile_picture || '',
+      date_of_birth: user.date_of_birth || '',
     };
   
     Cookies.set('user', JSON.stringify(userData), {
@@ -176,7 +180,10 @@ class ApiService {
         user_id: userData.user_id || 0,
         first_name: userData.first_name || '',
         last_name: userData.last_name || '',
-        phone_number: userData.phone_number || ''
+        phone_number: userData.phone_number || '',
+        gender: userData.gender || '',
+        profile_picture: userData.profile_picture || '',
+        date_of_birth: userData.date_of_birth || '',
       };
     } catch (error) {
       console.error('Error parsing user data:', error);
@@ -197,14 +204,14 @@ class ApiService {
   }
 
   // User API
-  // async getUsers(): Promise<ApiResponse<User[]>> {
-  //   const response = await fetch(this.getUrl(ENDPOINTS.USERS.LIST), {
-  //     method: 'GET',
-  //     credentials: API_CONFIG.CREDENTIALS,
-  //     headers: API_CONFIG.getHeaders(),
-  //   });
-  //   return this.handleResponse<User[]>(response);
-  // }
+  async getUsers(): Promise<ApiResponse<User[]>> {
+    const response = await fetch(this.getUrl(ENDPOINTS.USERS.LIST), {
+      method: 'GET',
+      credentials: API_CONFIG.CREDENTIALS,
+      headers: API_CONFIG.getHeaders(),
+    });
+    return this.handleResponse<User[]>(response);
+  }
 
   async createUser(formData: FormData): Promise<ApiResponse<User>> {
     try {
@@ -271,7 +278,8 @@ class ApiService {
 
   async updateBrand(id: string, formData: FormData): Promise<ApiResponse<Brand>> {
     // Since we're sending JSON, we need to ensure the content type is set correctly
-    const response = await fetch(this.getUrl(ENDPOINTS.BRANDS.UPDATE), {
+    const userId = this.getUserId();
+    const response = await fetch(this.getUrl(ENDPOINTS.BRANDS.UPDATE(userId)), {
       method: 'PUT',
       credentials: API_CONFIG.CREDENTIALS,
       headers: API_CONFIG.getHeaders(),
