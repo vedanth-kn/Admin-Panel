@@ -87,10 +87,9 @@ const MilestoneCreateModal = ({
     return (
         <Modal 
             isOpen={isOpen} 
-            onOpenChange={onOpenChange}
+            setIsOpen ={onOpenChange}
             scrollBehavior="inside"
             size='2xl'
-            color='primary'
             className='bg-white dark:bg-gray-900'
         >
             <ModalContent>

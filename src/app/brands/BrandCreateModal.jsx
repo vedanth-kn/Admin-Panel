@@ -22,7 +22,7 @@ const categories = [
     {label: "Food and Grocery", value: "FOOD_AND_GROCERY"},
 ];
 
-const BrandDialog = ({ 
+const BrandCreateModal = ({ 
     isOpen, 
     onOpenChange,  
     formData, 
@@ -219,4 +219,4 @@ const BrandDialog = ({
     );
 }
 
-export default BrandDialog;
+export default BrandCreateModal;

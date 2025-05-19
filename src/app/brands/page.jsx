@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Plus, Globe } from 'lucide-react';
-import {Alert, Button, Pagination} from "@heroui/react";
-import BrandDialog from './BrandCreateDialog';
-import BrandDetailsDialog from './BrandDetailsDialog';
+import { Alert, Button, Pagination } from "@heroui/react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import BrandCreateModal from './BrandCreateModal';
+import BrandDetailsModal from './BrandDetailsModal';
 import { apiService } from '@/services/api';
 
 export default function Brands() {
@@ -25,16 +27,14 @@ export default function Brands() {
         logoUrl: '',
         bannerUrl: '',
         brandImageUrl: '',
-        active: true // Add active field with default true
+        active: true
     });
 
-    // Helper function to get logo URL from media_details
     const getLogoUrl = (mediaDetails) => {
         const logoMedia = mediaDetails?.find(media => media.display_type === 'logo');
         return logoMedia?.media_url || null;
     };
 
-    // Calculate current brands to display
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
@@ -44,28 +44,39 @@ export default function Brands() {
             const response = await apiService.getBrands();
             
             if (Array.isArray(response.data)) {
-                // Explicitly check the active property
                 const activeBrands = response.data.filter(brand => {
-                    // Convert to boolean if it's a string
                     return brand.active === true || brand.active === 'true';
                 });
-                
-                // setBrands(activeBrands);
                 setBrands(response.data);
             } else {
                 console.error('Invalid response format:', response);
                 setError('Invalid data format received');
+                toast.error('Error: Invalid data format received');
             }
         } catch (error) {
             console.error('Error fetching brands:', error);
             setError(error.message);
+            
+            // Check if it's a network error
+            if (!navigator.onLine || error.message === 'Failed to fetch' || error.code === 'ERR_NETWORK') {
+                toast.error('Unable to connect to the server. Please check your internet connection or try again later.', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            } else if (error.response?.status === 404) {
+                toast.error('Server endpoint not found. Please contact support.');
+            } else {
+                toast.error(`Error: ${error.message}`);
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
-
-    // Get current brands after filtering
     const currentBrands = brands.slice(indexOfFirstItem, indexOfLastItem);
 
     useEffect(() => {
@@ -73,9 +84,21 @@ export default function Brands() {
     }, []);
     
     return (
-        (<Layout>
+        <Layout>
             <div className="fixed-container">
-                {/* Header */}
+                <ToastContainer 
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="light"
+                />
+                
                 <div className="">
                     <div className="page-header flex justify-between items-center">
                         <h1>BRANDS</h1>
@@ -90,20 +113,18 @@ export default function Brands() {
                     </div>
                 </div>
 
-                {/* Error State */}
                 <div>
                     {error && (
                         <Alert color="danger" title={error}/>
                     )}
                 </div>
+                
                 {isLoading ? (
                     <div className="flex-1 flex items-center justify-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
                     </div>
                 ) : (
-                    /* Brands Grid */
-                    (<div className="flex-1 overflow-y-auto">
-                        
+                    <div className="flex-1 overflow-y-auto">
                         <div className="p-6">
                             <div className="grid lg:grid-cols-3 gap-4 ">
                                 {currentBrands.map((brand) => (
@@ -123,7 +144,7 @@ export default function Brands() {
                                                     {brand.business_category}
                                                 </span><br></br>
                                                 {brand.website_url && (
-                                                    <a href={brand.website_url} target="_blank"className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg transition-colors">
+                                                    <a href={brand.website_url} target="_blank" className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg transition-colors">
                                                         <Globe className="w-4 h-4" />
                                                         Visit Website
                                                     </a>
@@ -155,13 +176,13 @@ export default function Brands() {
                                 color="primary"
                                 page={currentPage}
                                 total={Math.ceil(brands.length / itemsPerPage)}
-                                onChange={setCurrentPage} />
+                                onChange={setCurrentPage}
+                            />
                         </div>
-                    </div>)
+                    </div>
                 )}
                 
-                    
-                <BrandDialog 
+                <BrandCreateModal 
                     isOpen={isOpen}
                     onOpenChange={setIsOpen}
                     formData={formData}
@@ -171,7 +192,7 @@ export default function Brands() {
                 />
                 
                 {selectedBrand && (
-                    <BrandDetailsDialog
+                    <BrandDetailsModal
                         isOpen={isDetailsOpen}
                         setIsOpen={setIsDetailsOpen}
                         brand={selectedBrand}
@@ -180,6 +201,6 @@ export default function Brands() {
                     />
                 )}
             </div>
-        </Layout>)
+        </Layout>
     );
 }

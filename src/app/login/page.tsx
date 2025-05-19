@@ -15,6 +15,12 @@ export default function LoginForm() {
   const [timer, setTimer] = useState(0)
   const router = useRouter() 
 
+  const isServerOfflineError = (error: any) => {
+    return error?.message?.includes('Failed to fetch') || 
+           error?.message?.includes('ECONNREFUSED') ||
+           error?.code === 'ECONNREFUSED'
+  }
+
   const startResendTimer = () => {
     setTimer(30)
     const interval = setInterval(() => {
@@ -48,7 +54,11 @@ export default function LoginForm() {
       }
     } catch (err) {
       console.error('Send OTP Error:', err)
-      setError('Failed to send OTP. Please try again.')
+      if (isServerOfflineError(err)) {
+        setError('Server is OFF. Please turn ON the server and try again.')
+      } else {
+        setError('Failed to send OTP. Please try again.')
+      }
     }
   }
 
